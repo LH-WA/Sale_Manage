@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>Register</title>
+    <style >
+         video{
+            width: 100%;
+            position: absolute;
+         }
+     </style >
+</head>
+
+<body >
+    <video autoplay loop muted>
+      <source src="/static/Homepage.webm" type="video/webm">
+<!--        <embed width="1920" height="1080" src="movie.swf">-->
+    </video>
+    <div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+          <div class="ui stackable centered column grid">
+            <div class="centered row">
+              <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                  <form action="/regist/" method="POST" class="ui form" >
+                    {% csrf_token %}
+                    <h2 style="color: black;" align="center">欢迎注册</h2>
+                    <label style="color: red;" >{{ msg_1 }}</label>
+                    <div class="field">
+                      <label for="Account"></label>
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="数字+字母 8位 账户号码" type="text" name="Account" required autocomplete="off">
+                    </div>
+                    <div class="field">
+                      <label for="Password"></label>
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="密码" type="password" name="Password" required>
+                    </div>
+                      <label style="color: red;">{{ msg_2 }}</label>
+                    <div class="field">
+                      <label for="Password_r"></label>
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="重复密码" type="password" name="Password_r" required>
+                    </div>
+                      <label style="color: red;">{{ msg_3 }}</label>
+                      <select name="Branch" style="font-size: 15pt; margin-top:10px" >
+                        <option value="00">请选择所属分店</option>
+                        <option value="杨浦区">杨浦区</option>
+                        <option value="虹口区">虹口区</option>
+                        <option value="浦东区">浦东区</option>
+                        <option value="宝钢区">宝山区</option>
+                      </select>
+                      <label style="color: red;" >{{ msg_4 }}</label>
+                      <select name="Section" style="font-size: 15pt; margin-top:10px" >
+                        <option value="00">请选择所属部门</option>
+                        <option value="管理部门">管理部门</option>
+                        <option value="销售部门">销售部门</option>
+                        <option value="采购部门">采购部门</option>
+                        <option value="物流部门">物流部门</option>
+                      </select>
+
+                    <input type="submit" id="submit" value="立即注册" style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%" class="ui button" >
+                  </form>
+                </div>  
+              </div>
+            </div>
+          </div>
+       
+    </div>
+</body>
+
+</html>
