@@ -3,12 +3,12 @@ from django.db import models
 # Create your models here.
 class User_Info(models.Model):
     """用户信息"""
-    # 用户账号
-    user_account = models.CharField(max_length=10, primary_key=True, unique=True)
+    # 用户(账号/编号)
+    user_account = models.CharField(max_length=8, primary_key=True, unique=True)
     # 用户密码
-    user_psw = models.CharField(max_length=10)
+    user_psw = models.CharField(max_length=8)
     # 用户名
-    user_name = models.CharField(max_length=10)
+    user_name = models.CharField(max_length=8)
     # 用户所在部门
     user_dep = models.CharField(max_length=10)
     # 用户电话

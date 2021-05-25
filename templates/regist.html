@@ -30,18 +30,28 @@
                     <label style="color: red;" >{{ msg_1 }}</label>
                     <div class="field">
                       <label for="Account"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="数字+字母 8位 账户号码" type="text" name="Account" required autocomplete="off">
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="8位数字 员工账号" type="number" name="Account" required autocomplete="off">
+                    </div>
+                    <label style="color: red;" >{{ msg_2 }}</label>
+                    <div class="field">
+                      <label for="Name"></label>
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工姓名" type="text" name="Name" required autocomplete="off">
+                    </div>
+                    <label style="color: red;" >{{ msg_3 }}</label>
+                    <div class="field">
+                      <label for="Tel"></label>
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工电话" type="text" name="Tel" required autocomplete="off">
                     </div>
                     <div class="field">
                       <label for="Password"></label>
                       <input style="font-size: 15pt; margin-top:0px" placeholder="密码" type="password" name="Password" required>
                     </div>
-                      <label style="color: red;">{{ msg_2 }}</label>
+                      <label style="color: red;">{{ msg_4 }}</label>
                     <div class="field">
                       <label for="Password_r"></label>
                       <input style="font-size: 15pt; margin-top:0px" placeholder="重复密码" type="password" name="Password_r" required>
                     </div>
-                      <label style="color: red;">{{ msg_3 }}</label>
+                      <label style="color: red;">{{ msg_5 }}</label>
                       <select name="Branch" style="font-size: 15pt; margin-top:10px" >
                         <option value="00">请选择所属分店</option>
                         <option value="杨浦区">杨浦区</option>
@@ -49,7 +59,7 @@
                         <option value="浦东区">浦东区</option>
                         <option value="宝钢区">宝山区</option>
                       </select>
-                      <label style="color: red;" >{{ msg_4 }}</label>
+                      <label style="color: red;" >{{ msg_6 }}</label>
                       <select name="Section" style="font-size: 15pt; margin-top:10px" >
                         <option value="00">请选择所属部门</option>
                         <option value="管理部门">管理部门</option>
