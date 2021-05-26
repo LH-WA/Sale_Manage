@@ -9,12 +9,13 @@ class User_Info(models.Model):
     user_psw = models.CharField(max_length=8)
     # 用户名
     user_name = models.CharField(max_length=8)
-    # 用户所在部门
-    user_dep = models.CharField(max_length=10)
     # 用户电话
     user_tel = models.CharField(max_length=11)
-    # 用户所在分店
-    # user_branch = models.CharField(max_length=10)
+    # 用户所在分店片区
+    # user_branch = models.CharField(max_length=5)
+    branch_district = models.ForeignKey('Branch_Info', on_delete=models.DO_NOTHING)
+    # 用户所在部门
+    user_dep = models.CharField(max_length=5)
 
 class Goods_Info(models.Model):
     """商品信息"""
@@ -25,7 +26,7 @@ class Goods_Info(models.Model):
     # 商品类别
     goods_category = models.CharField(max_length=10)
     # 商品单位
-    goods_unit = models.CharField(max_length=2)
+    goods_unit = models.CharField(max_length=4)
     # 商品售价
     goods_price = models.DecimalField(max_digits=5, decimal_places=2)
 
@@ -40,18 +41,16 @@ class Supplier_Info(models.Model):
     # 供应商电话
     supplier_tel = models.CharField(max_length=11)
     # 供应商地址
-    supplier_address = models.CharField(max_length=11)
+    supplier_address = models.CharField(max_length=20)
 
 class Branch_Info(models.Model):
     """门店信息"""
     # 门店编号
     branch_id = models.IntegerField(primary_key=True, unique=True)
-    # 门店名称
-    branch_name = models.CharField(max_length=10)
+    # 门店所属片区
+    branch_district = models.CharField(max_length=5)
     # 门店地址
     branch_address = models.CharField(max_length=15)
-    # 门店管理人---
-    # branch_manager = models.BigIntegerField(max_length=11)
 
 class Storage_Info(models.Model):
     """仓库信息"""

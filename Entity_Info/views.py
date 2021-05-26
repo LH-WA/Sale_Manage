@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 # Create your views here.
 
-from Entity_Info.models import User_Info,Goods_Info
+from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
 
 # from pyecharts.globals import CurrentConfig
 from django.shortcuts import render
@@ -31,7 +31,7 @@ def logins(request):
         request.session['username'] = username
         request.session['password'] = password
         return render(request, 'index.html', {'username': username})
-    return render(request, 'login.html')
+    # return render(request, 'login.html')
 
 
 def regist(request):
@@ -94,7 +94,7 @@ def logout(request):
     return redirect('/regist/')
 
 
-def goods_info_new_input(request):
+def goods_info_input(request):
     if request.method == 'POST':
         Id = request.POST.get("Goods_id")
         Name = request.POST.get("Goods_name")
@@ -104,12 +104,55 @@ def goods_info_new_input(request):
 
         if Goods_Info.objects.filter(goods_id=Id):
             msg_1 = '商品信息已存在'
-            return render(request, 'goods_new_input.html', locals())
+            return render(request, 'goods_input.html', locals())
 
         Goods_Info.objects.create(goods_id=Id, goods_name=Name, goods_category=Category, goods_unit=Unit, goods_price=Price)
 
+    return render(request, 'goods_input.html')
+
+def supplier_info_input(request):
+    if request.method == 'POST':
+        Id = request.POST.get("Supplier_id")
+        Name = request.POST.get("Supplier_name")
+        Mail = request.POST.get("Supplier_mail")
+        Tel = request.POST.get("Supplier_tel")
+        Address = request.POST.get("Supplier_address")
+
+        if Supplier_Info.objects.filter(supplier_id=Id):
+            msg_1 = '供应商信息已存在'
+            return render(request, 'goods_new_input.html', locals())
+
+        Supplier_Info.objects.create(supplier_id=Id, supplier_name=Name, supplier_mail=Mail, supplier_tel=Tel, supplier_address=Address)
+
     return render(request, 'goods_new_input.html')
 
+def branch_info_input(request):
+    if request.method == 'POST':
+        Id = request.POST.get("Branch_id")
+        District = request.POST.get("Branch_district")
+        Address = request.POST.get("Branch_address")
+
+        if Branch_Info.objects.filter(supplier_id=Id):
+            msg_1 = '分店信息已存在'
+            return render(request, 'goods_new_input.html', locals())
+
+        Supplier_Info.objects.create(branch_id=Id, branch_district=District, branch_address=Address)
+
+    return render(request, 'goods_new_input.html')
+
+
+def storage_info_input(request):
+    if request.method == 'POST':
+        Id = request.POST.get("Storage_id")
+        Address = request.POST.get("Storage_address")
+
+        if Branch_Info.objects.filter(supplier_id=Id):
+            msg_1 = '仓库信息已存在'
+            return render(request, 'goods_new_input.html', locals())
+
+        Storage_Info.objects.create(storage_id=Id, storage_address=Address)
+
+    return render(request, 'goods_new_input.html')
 
 def show_chart(request):
     Goods = ['河马', '蟒蛇', '老虎', '大象', '兔子', '熊猫', '狮子']
