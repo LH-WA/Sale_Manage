@@ -4,8 +4,6 @@ from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 
 from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
 
-# from pyecharts.globals import CurrentConfig
-from django.shortcuts import render
 # from django.db import connection
 # from django.http import HttpResponse
 # from django.template import loader
@@ -31,7 +29,7 @@ def logins(request):
         request.session['username'] = username
         request.session['password'] = password
         return render(request, 'index.html', {'username': username})
-    # return render(request, 'login.html')
+    return render(request, 'login.html')
 
 
 def regist(request):
@@ -83,7 +81,8 @@ def regist(request):
         User_Info.objects.create(user_account=Account,user_psw=Password,user_branch=Branch,user_dep=Section)
 
         return redirect('/login/')
-    return render(request, 'regist.html')
+
+    return render(request, 'regist.html',{'Dist': [list(item.values())[0] for item in Branch_Info.objects.values('branch_district')]})
 
 
 def logout(request):

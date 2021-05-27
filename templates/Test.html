@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>Register</title>
+    <style >
+         video{
+            width: 100%;
+            position: absolute;
+         }
+     </style >
+</head>
+
+<body >
+    <div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+          <div class="ui stackable centered column grid">
+            <div class="centered row">
+              <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                  <form action="/test/" method="POST" class="ui form" >
+                      {% csrf_token %}
+                    <select name="Inquiry" style="font-size: 15pt; margin-top:10px" >
+                        <option value="00">查询方式</option>
+                        <option value="单号逆序">单号逆序</option>
+                        <option value="单号顺序">单号顺序</option>
+                      </select>
+                    <input type="submit" id="submit" value="确认" style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%" class="ui button" >
+                      <input type="date" name="Time_begin" value="开始时间">
+                      <input type="date" name="Time_end" value="结束时间">
+                      {% for bill in bill_lists%}
+                    <div class="field">
+                      <label ></label>
+                        <output >单号:{{bill.goods_delivery_id}}</output>
+                      <label ></label>
+                        <output >发货时间:{{bill.goods_delivery_send_time}}</output>
+                      <label ></label>
+                        <output >收货时间:{{bill.branch_sale_receive_time}}</output>
+                      <label ></label>
+                        <output >销售数量:{{bill.goods_num}}</output>
+                      <label ></label>
+                        <output >门店号:{{bill.delivery_branch_id.branch_id}}</output>
+                      <label ></label>
+                        <output >仓库号:{{bill.delivery_storage_id.storage_id}}</output>
+                      <label ></label>
+                        <output >商品码:{{bill.delivery_goods_id.goods_id}}</output>
+                      <label ></label>
+                        <output >物流员工:{{bill.goods_delivery_staff.user_account}}</output>
+                      </div>
+                    {% endfor %}
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    </div>
+</body>
+
+</html>

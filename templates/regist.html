@@ -54,10 +54,13 @@
                       <label style="color: red;">{{ msg_5 }}</label>
                       <select name="Branch" style="font-size: 15pt; margin-top:10px" >
                         <option value="00">所属分店片区</option>
-                        <option value="杨浦区">杨浦区</option>
-                        <option value="虹口区">虹口区</option>
-                        <option value="浦东区">浦东区</option>
-                        <option value="宝钢区">宝山区</option>
+                        {% for item in Dist %}
+                          <option value="{{item}}">{{item}}</option>
+<!--                        <option value="杨浦区">杨浦区</option>-->
+<!--                        <option value="虹口区">虹口区</option>-->
+<!--                        <option value="浦东区">浦东区</option>-->
+<!--                        <option value="宝钢区">宝山区</option>-->
+                        {% endfor %}
                       </select>
                       <label style="color: red;" >{{ msg_6 }}</label>
                       <select name="Section" style="font-size: 15pt; margin-top:10px" >

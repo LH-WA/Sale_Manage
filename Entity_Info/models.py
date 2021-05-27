@@ -12,10 +12,18 @@ class User_Info(models.Model):
     # 用户电话
     user_tel = models.CharField(max_length=11)
     # 用户所在分店片区
-    # user_branch = models.CharField(max_length=5)
-    branch_district = models.ForeignKey('Branch_Info', on_delete=models.DO_NOTHING)
+    user_branch = models.ForeignKey('Branch_Info', on_delete=models.DO_NOTHING)
     # 用户所在部门
     user_dep = models.CharField(max_length=5)
+
+class Branch_Info(models.Model):
+    """门店信息"""
+    # 门店编号
+    branch_id = models.IntegerField(primary_key=True, unique=True)
+    # 门店所属片区
+    branch_district = models.CharField(max_length=5)
+    # 门店地址
+    branch_address = models.CharField(max_length=25)
 
 class Goods_Info(models.Model):
     """商品信息"""
@@ -28,33 +36,24 @@ class Goods_Info(models.Model):
     # 商品单位
     goods_unit = models.CharField(max_length=4)
     # 商品售价
-    goods_price = models.DecimalField(max_digits=5, decimal_places=2)
+    goods_price = models.DecimalField(max_digits=8, decimal_places=2)
 
 class Supplier_Info(models.Model):
     """供应商信息"""
     # 供应商编号
-    supplier_id = models.IntegerField(max_length=6, primary_key=True, unique=True)
+    supplier_id = models.IntegerField(primary_key=True, unique=True)
     # 供应商名称
     supplier_name = models.CharField(max_length=10)
     # 供应商邮件
-    supplier_mail = models.CharField(max_length=12)
+    supplier_mail = models.CharField(max_length=20)
     # 供应商电话
     supplier_tel = models.CharField(max_length=11)
     # 供应商地址
-    supplier_address = models.CharField(max_length=20)
-
-class Branch_Info(models.Model):
-    """门店信息"""
-    # 门店编号
-    branch_id = models.IntegerField(primary_key=True, unique=True)
-    # 门店所属片区
-    branch_district = models.CharField(max_length=5)
-    # 门店地址
-    branch_address = models.CharField(max_length=15)
+    supplier_address = models.CharField(max_length=25)
 
 class Storage_Info(models.Model):
     """仓库信息"""
     # 仓库编号
     storage_id = models.IntegerField(primary_key=True, unique=True)
     # 仓库地址
-    storage_address = models.CharField(max_length=15)
+    storage_address = models.CharField(max_length=25)

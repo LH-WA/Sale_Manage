@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'Sales_Management.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sale_manegement',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
-        'USER':'root',
-        'PASSWORD':'Mysql303',
+        'NAME': 'sale_management',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': 'Mysql303',
     }
 }
 
