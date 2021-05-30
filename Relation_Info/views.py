@@ -9,9 +9,11 @@ from Relation_Info.models import Company_Branch_Delivery
 from Entity_Info.models import User_Info, Branch_Info, Storage_Info, Goods_Info
 from datetime import date
 
+
 # Create your views here.
 class Record(object):
     count = 0  # Record.count是静态变量
+
 
 def company_branch_delivery(request):
     Temp = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')][1:]
@@ -80,7 +82,8 @@ def company_branch_delivery(request):
         if Msg['msg_1'] or Msg['msg_2']:
             return render(request, 'Company_Branch_Delivery.html',
                           {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
-                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST})
+                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST,
+                           'bill_len': len(bill_lists)})
 
         condition_dict = {}
         if Search_Branch_id:
@@ -110,7 +113,8 @@ def company_branch_delivery(request):
         if Msg['msg_3'] or Msg['msg_4'] or Msg['msg_5']:
             return render(request, 'Company_Branch_Delivery.html',
                           {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
-                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST})
+                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST,
+                           'bill_len': len(bill_lists)})
         if New_goods_delivery_send_time and New_delivery_branch_id and New_delivery_storage_id and New_delivery_goods_id and New_goods_delivery_staff_id:
             Company_Branch_Delivery.objects.create(goods_delivery_id=Max_id + 1,
                                                    goods_delivery_send_time=New_goods_delivery_send_time,
@@ -176,7 +180,7 @@ def company_branch_delivery(request):
     return render(request, 'Company_Branch_Delivery.html',
                   {'bill_lists': bill_lists, 'Dist': Temp, 'State': State, 'New_id': Max_id + 1, 'Edit_id': Edit_id,
                    'Edit_id_branch_id': Edit_id_branch_id, 'Edit_id_branch_district': Edit_id_branch_district,
-                   'All_request': request.POST})
+                   'All_request': request.POST, 'bill_len': len(bill_lists)})
 
 
 def Sort_condition(Mode):
