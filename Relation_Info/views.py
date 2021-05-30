@@ -6,14 +6,12 @@ from pyecharts.charts import Map
 from pyecharts.faker import Faker
 
 from Relation_Info.models import Company_Branch_Delivery
-from Entity_Info.models import User_Info, Branch_Info
+from Entity_Info.models import User_Info, Branch_Info, Storage_Info, Goods_Info
 from datetime import date
-
 
 # Create your views here.
 class Record(object):
     count = 0  # Record.count是静态变量
-
 
 def company_branch_delivery(request):
     Temp = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')][1:]
@@ -23,6 +21,7 @@ def company_branch_delivery(request):
     if Edit_id:
         State = 1
         Record.count = Edit_id
+    # 删除
     Delete_id = request.GET.get("Delete_id", '')
     if Delete_id:
         Company_Branch_Delivery.objects.get(goods_delivery_id=Delete_id).delete()
@@ -31,34 +30,7 @@ def company_branch_delivery(request):
     Max_id = max([item['goods_delivery_id'] for item in Company_Branch_Delivery.objects.values('goods_delivery_id')])
     bill_lists = Company_Branch_Delivery.objects.order_by('-goods_delivery_id')[:5]
     if request.method == 'POST':
-        Search_Goods_delivery_id = request.POST.get("Search_Goods_delivery_id")
-        Search_Time_begin = request.POST.get("Search_Time_begin")
-        Search_Time_end = request.POST.get("Search_Time_end")
-        Search_Staff_id = request.POST.get("Search_Staff_id")
-        Search_Branch_id = request.POST.get("Search_Branch_id")
-
-        Multistage_query = request.POST.get("Multistage_query")
-        Level_1 = request.POST.get("Level_1")
-        Level_2 = request.POST.get("Level_2")
-        Level_3 = request.POST.get("Level_3")
-
-        Delivery_id_Sort = request.POST.get("Delivery_id_Sort")
-        Send_time_Sort = request.POST.get("Send_time_Sort")
-        Receive_time_Sort = request.POST.get("Receive_time_Sort")
-        Goods_num_Sort = request.POST.get("Goods_num_Sort")
-        Branch_id_Sort = request.POST.get("Branch_id_Sort")
-        Storage_id_Sort = request.POST.get("Storage_id_Sort")
-        Good_id_Sort = request.POST.get("Good_id_Sort")
-        Staff_id_Sort = request.POST.get("Staff_id_Sort")
-
-        New_goods_delivery_send_time = request.POST.get("new_goods_delivery_send_time", '')
-        New_goods_delivery_receive_time = request.POST.get("new_goods_delivery_receive_time", '')
-        New_goods_num = request.POST.get("new_goods_num", '')
-        New_delivery_branch_id = request.POST.get("new_delivery_branch_id", '')
-        New_delivery_storage_id = request.POST.get("new_delivery_storage_id", '')
-        New_delivery_goods_id = request.POST.get("new_delivery_goods_id", '')
-        New_goods_delivery_staff_id = request.POST.get("new_goods_delivery_staff_id", '')
-
+        # 修改
         Edit_goods_delivery_send_time = request.POST.get("edit_goods_delivery_send_time", '')
         Edit_goods_delivery_receive_time = request.POST.get("edit_goods_delivery_receive_time")
         Edit_goods_num = request.POST.get("edit_goods_num")
@@ -89,28 +61,25 @@ def company_branch_delivery(request):
             Company_Branch_Delivery.objects.filter(goods_delivery_id=Record.count).update(
                 goods_delivery_staff_id_id=Edit_goods_delivery_staff_id)
 
-        if New_goods_delivery_send_time and New_delivery_branch_id and New_delivery_storage_id and New_delivery_goods_id and New_goods_delivery_staff_id:
-            Company_Branch_Delivery.objects.create(goods_delivery_id=Max_id + 1,
-                                                   goods_delivery_send_time=New_goods_delivery_send_time,
-                                                   goods_delivery_receive_time=New_goods_delivery_receive_time,
-                                                   goods_num=New_goods_num,
-                                                   delivery_branch_id_id=New_delivery_branch_id,
-                                                   delivery_storage_id_id=New_delivery_storage_id,
-                                                   delivery_goods_id_id=New_delivery_goods_id,
-                                                   goods_delivery_staff_id_id=New_goods_delivery_staff_id)
-
+        # 搜索
+        Search_Goods_delivery_id = request.POST.get("Search_Goods_delivery_id")
+        Search_Time_begin = request.POST.get("Search_Time_begin")
+        Search_Time_end = request.POST.get("Search_Time_end")
+        Search_Staff_id = request.POST.get("Search_Staff_id")
+        Search_Branch_id = request.POST.get("Search_Branch_id")
         if not Search_Time_begin:
             Search_Time_begin = date(2000, 1, 1)
         if not Search_Time_end:
             Search_Time_end = date(2029, 12, 31)
+        Msg = {'msg_1': '', 'msg_2': '', 'msg_3': '', 'msg_4': '', 'msg_5': ''}
         if Search_Staff_id and not User_Info.objects.filter(user_account__contains=Search_Staff_id):
-            return render(request, 'Company_Branch_Delivery.html',
-                          {'bill_lists': bill_lists, 'Dist': Temp, 'msg_1': '员工号无此字段', 'State': State,
-                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST})
+            Msg['msg_1'] = '员工号无此字段'
         if Search_Goods_delivery_id and not Company_Branch_Delivery.objects.filter(
                 goods_delivery_id__contains=Search_Goods_delivery_id):
+            Msg['msg_2'] = '单号无此字段'
+        if Msg['msg_1'] or Msg['msg_2']:
             return render(request, 'Company_Branch_Delivery.html',
-                          {'bill_lists': bill_lists, 'Dist': Temp, 'msg_2': '单号无此字段', 'State': State,
+                          {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
                            'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST})
 
         condition_dict = {}
@@ -122,6 +91,49 @@ def company_branch_delivery(request):
             condition_dict['goods_delivery_id__contains'] = Search_Goods_delivery_id
         condition_dict['goods_delivery_send_time__range'] = [Search_Time_begin, Search_Time_end]
         bill_lists = Company_Branch_Delivery.objects.filter(**condition_dict)
+
+        # 新增
+        New_goods_delivery_send_time = request.POST.get("new_goods_delivery_send_time", '')
+        New_goods_delivery_receive_time = request.POST.get("new_goods_delivery_receive_time", '')
+        New_goods_num = request.POST.get("new_goods_num", '')
+        New_delivery_branch_id = request.POST.get("new_delivery_branch_id", '')
+        New_delivery_storage_id = request.POST.get("new_delivery_storage_id", '')
+        New_delivery_goods_id = request.POST.get("new_delivery_goods_id", '')
+        New_goods_delivery_staff_id = request.POST.get("new_goods_delivery_staff_id", '')
+        if New_delivery_storage_id and not Storage_Info.objects.filter(storage_id=New_delivery_storage_id):
+            Msg['msg_3'] = '仓库不存在'
+        if New_delivery_goods_id and not Goods_Info.objects.filter(goods_id=New_delivery_goods_id):
+            Msg['msg_4'] = '商品不存在'
+        if New_goods_delivery_staff_id and not User_Info.objects.filter(user_account=New_goods_delivery_staff_id):
+            Msg['msg_5'] = '员工不存在'
+
+        if Msg['msg_3'] or Msg['msg_4'] or Msg['msg_5']:
+            return render(request, 'Company_Branch_Delivery.html',
+                          {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
+                           'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST})
+        if New_goods_delivery_send_time and New_delivery_branch_id and New_delivery_storage_id and New_delivery_goods_id and New_goods_delivery_staff_id:
+            Company_Branch_Delivery.objects.create(goods_delivery_id=Max_id + 1,
+                                                   goods_delivery_send_time=New_goods_delivery_send_time,
+                                                   goods_delivery_receive_time=New_goods_delivery_receive_time,
+                                                   goods_num=New_goods_num,
+                                                   delivery_branch_id_id=New_delivery_branch_id,
+                                                   delivery_storage_id_id=New_delivery_storage_id,
+                                                   delivery_goods_id_id=New_delivery_goods_id,
+                                                   goods_delivery_staff_id_id=New_goods_delivery_staff_id)
+
+        # 排序
+        Delivery_id_Sort = request.POST.get("Delivery_id_Sort")
+        Send_time_Sort = request.POST.get("Send_time_Sort")
+        Receive_time_Sort = request.POST.get("Receive_time_Sort")
+        Goods_num_Sort = request.POST.get("Goods_num_Sort")
+        Branch_id_Sort = request.POST.get("Branch_id_Sort")
+        Storage_id_Sort = request.POST.get("Storage_id_Sort")
+        Good_id_Sort = request.POST.get("Good_id_Sort")
+        Staff_id_Sort = request.POST.get("Staff_id_Sort")
+        Multistage_query = request.POST.get("Multistage_query")
+        Level_1 = request.POST.get("Level_1")
+        Level_2 = request.POST.get("Level_2")
+        Level_3 = request.POST.get("Level_3")
 
         sort_list = []
         if Multistage_query:
@@ -148,11 +160,9 @@ def company_branch_delivery(request):
                 sort_list.append(Sort_condition(Good_id_Sort))
             elif Sort_condition(Staff_id_Sort):
                 sort_list.append(Sort_condition(Staff_id_Sort))
-
         bill_lists = bill_lists.order_by(*sort_list)
 
         # print('POST内容: ', request.POST)
-
         return render(request, 'Company_Branch_Delivery.html',
                       {'bill_lists': bill_lists, 'Dist': Temp, 'State': State, 'New_id': Max_id + 1,
                        'Edit_id': Edit_id, 'All_request': request.POST})

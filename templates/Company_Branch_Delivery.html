@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <title>采购信息录入</title>
+    <script type="text/javascript">
+    </script>
+
+
 </head>
 
-<body onload="Select_record()">
+<body onload="Select_record()" >
 <div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
     <div class="ui stackable centered column grid">
         <div class="centered row">
@@ -16,17 +20,21 @@
                 <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
                         {% csrf_token %}
+                        <script type="text/javascript">
+                        Level("Level_1");
+                        Level('Level_2');
+                        </script>
                         <select name="Delivery_id_Sort" style="font-size: 15pt; margin-top:10px" id="Delivery_id_Sort">
-                            <option value="" >单号</option>
+                            <option value="">单号</option>
                             <option value="delivery_id_incr">升序</option>
                             <option value="delivery_id_desc">降序</option>
                         </select>
-                        <select name="Staff_id_Sort" style="font-size: 15pt; margin-top:10px">
+                        <select name="Staff_id_Sort" style="font-size: 15pt; margin-top:10px" id="Staff_id_Sort">
                             <option value="">员工号</option>
                             <option value="staff_id_incr">升序</option>
                             <option value="staff_id_desc">降序</option>
                         </select>
-                        <select name="Branch_id_Sort" style="font-size: 15pt; margin-top:10px">
+                        <select name="Branch_id_Sort" style="font-size: 15pt; margin-top:10px" id="Branch_id_Sort">
                             <option value="">门店号</option>
                             <option value="branch_id_incr">升序</option>
                             <option value="branch_id_desc">降序</option>
@@ -36,7 +44,7 @@
                             <option value="">单项排序</option>
                             <option value="多级排序">多级排序</option>
                         </select>
-                        <select name="Level_1" style="font-size: 15pt; margin-top:10px">
+                        <select name="Level_1" style="font-size: 15pt; margin-top:10px" id="Level_1">
                             <option value="">一级排序依据</option>
                             <option value="delivery_id_incr">配送单号(顺序)</option>
                             <option value="delivery_id_desc">配送单号(逆序)</option>
@@ -55,7 +63,7 @@
                             <option value="staff_id_incr">配送员工号(顺序)</option>
                             <option value="staff_id_desc">配送员工号(逆序)</option>
                         </select>
-                        <select name="Level_2" style="font-size: 15pt; margin-top:10px">
+                        <select name="Level_2" style="font-size: 15pt; margin-top:10px" id="Level_2">
                             <option value="">二级排序依据</option>
                             <option value="delivery_id_incr">配送单号(顺序)</option>
                             <option value="delivery_id_desc">配送单号(逆序)</option>
@@ -74,7 +82,7 @@
                             <option value="staff_id_incr">配送员工号(顺序)</option>
                             <option value="staff_id_desc">配送员工号(逆序)</option>
                         </select>
-                        <select name="Level_3" style="font-size: 15pt; margin-top:10px">
+                        <select name="Level_3" style="font-size: 15pt; margin-top:10px" id="Level_3">
                             <option value="">三级排序依据</option>
                             <option value="delivery_id_incr">配送单号(顺序)</option>
                             <option value="delivery_id_desc">配送单号(逆序)</option>
@@ -94,19 +102,19 @@
                             <option value="staff_id_desc">配送员工号(逆序)</option>
                         </select>
 
-                        <label style="color: red;">{{ msg_1 }}</label>
+                        <label style="color: red;">{{ Msg.msg_1 }}</label>
                         <div class="field">
                             <label for="Search_Staff_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
                                    name="Search_Staff_id" value="{{All_request.Search_Staff_id}}">
                         </div>
-                        <select name="Search_Branch_id" style="font-size: 15pt; margin-top:10px">
+                        <select name="Search_Branch_id" style="font-size: 15pt; margin-top:10px" id="Search_Branch_id">
                             <option value="">所有分店</option>
                             {% for item_1,item_2 in Dist %}
-                            <option value="{{item_1}}">{{item_2}}</option>
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
                             {% endfor %}
                         </select>
-                        <label style="color: red;">{{ msg_2 }}</label>
+                        <label style="color: red;">{{ Msg.msg_2 }}</label>
                         <div class="field">
                             <label for="Search_Goods_delivery_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
@@ -123,31 +131,31 @@
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
                         {% csrf_token %}
                         {% if bill_lists %}
-                            {% for bill in bill_lists%}
-                            <div class="field">
-                                <label></label>
-                                <output>单号:{{bill.goods_delivery_id}}</output>
-                                <label></label>
-                                <output>发货时间:{{bill.goods_delivery_send_time}}</output>
-                                <label></label>
-                                <output>收货时间:{{bill.goods_delivery_receive_time}}</output>
-                                <label></label>
-                                <output>配送数量:{{bill.goods_num}}</output>
-                                <label></label>
-                                <output>门店号:{{bill.delivery_branch_id.branch_id}}</output>
-                                <label></label>
-                                <output>仓库号:{{bill.delivery_storage_id.storage_id}}</output>
-                                <label></label>
-                                <output>商品码:{{bill.delivery_goods_id.goods_id}}</output>
-                                <label></label>
-                                <output>物流员工:{{bill.goods_delivery_staff_id.user_account}}</output>
-                                <label></label>
-                                <a class="item" href="/company_branch_delivery/?Edit_id={{bill.goods_delivery_id}}">修改</a>
-                                <a class="item" href="/company_branch_delivery/?Delete_id={{bill.goods_delivery_id}}">删除</a>
-                            </div>
-                            {% endfor %}
+                        {% for bill in bill_lists%}
+                        <div class="field">
+                            <label></label>
+                            <output>单号:{{bill.goods_delivery_id}}</output>
+                            <label></label>
+                            <output>发货时间:{{bill.goods_delivery_send_time}}</output>
+                            <label></label>
+                            <output>收货时间:{{bill.goods_delivery_receive_time}}</output>
+                            <label></label>
+                            <output>配送数量:{{bill.goods_num}}</output>
+                            <label></label>
+                            <output>门店号:{{bill.delivery_branch_id.branch_id}}</output>
+                            <label></label>
+                            <output>仓库号:{{bill.delivery_storage_id.storage_id}}</output>
+                            <label></label>
+                            <output>商品码:{{bill.delivery_goods_id.goods_id}}</output>
+                            <label></label>
+                            <output>物流员工:{{bill.goods_delivery_staff_id.user_account}}</output>
+                            <label></label>
+                            <a class="item" href="/company_branch_delivery/?Edit_id={{bill.goods_delivery_id}}">修改</a>
+                            <a class="item" href="/company_branch_delivery/?Delete_id={{bill.goods_delivery_id}}">删除</a>
+                        </div>
+                        {% endfor %}
                         {% else %}
-                            <label style="color: red;">无查询结果</label>
+                        <label style="color: red;">无查询结果</label>
                         {% endif %}
                         <h2 style="color: black;" align="center">采购信息录入</h2>
                         <div class="field">
@@ -164,28 +172,29 @@
                             <input placeholder="接收时间" type="date" name="new_goods_delivery_receive_time"
                                    autocomplete="off">
                         </div>
-                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
                         <div class="field">
                             <label for="new_goods_num"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="配送数量" type="number"
-                                   name="new_goods_num" required>
+                                   name="new_goods_num" required >
                         </div>
                         <select name="new_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
                             {% for item_1,item_2 in Dist %}
-                            <option value="{{item_1}}">{{item_2}}</option>
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
                             {% endfor %}
                         </select>
-                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <label style="color: red;">{{ Msg.msg_3 }}</label>
                         <div class="field">
                             <label for="new_delivery_storage_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
                                    name="new_delivery_storage_id" required>
                         </div>
+                        <label style="color: red;" >{{ Msg.msg_4 }}</label>
                         <div class="field">
                             <label for="new_delivery_goods_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
                                    name="new_delivery_goods_id" required>
                         </div>
+                        <label style="color: red;" >{{ Msg.msg_5 }}</label>
                         <div class="field">
                             <label for="new_goods_delivery_staff_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
@@ -250,10 +259,125 @@
     </div>
 </div>
 </body>
-    <script type="text/javascript">
-        function Select_record() {
-            document.getElementById("Delivery_id_Sort").selectedIndex = "delivery_id_incr";
-        }
-    </script>
+
+<script type="text/javascript">
+    function Select_record() {
+        if('{{All_request.Delivery_id_Sort}}' == 'delivery_id_incr')
+            document.getElementById("Delivery_id_Sort").selectedIndex = 1;
+        else if('{{All_request.Delivery_id_Sort}}' == 'delivery_id_desc')
+            document.getElementById("Delivery_id_Sort").selectedIndex = 2;
+        else if('{{All_request.Staff_id_Sort}}' == 'staff_id_incr')
+            document.getElementById("Staff_id_Sort").selectedIndex = 1;
+        else if('{{All_request.Staff_id_Sort}}' == 'staff_id_desc')
+            document.getElementById("Staff_id_Sort").selectedIndex = 2;
+        else if('{{All_request.Branch_id_Sort}}' == 'branch_id_incr')
+            document.getElementById("Branch_id_Sort").selectedIndex = 1;
+        else if('{{All_request.Branch_id_Sort}}' == 'branch_id_desc')
+            document.getElementById("Branch_id_Sort").selectedIndex = 2;
+
+        document.getElementById("Search_Branch_id").selectedIndex = {{All_request.Search_Branch_id}};
+
+        if('{{All_request.Level_1}}' == 'delivery_id_incr')
+            document.getElementById("Level_1").selectedIndex = 1;
+        else if('{{All_request.Level_1}}' == 'delivery_id_desc')
+            document.getElementById("Level_1").selectedIndex = 2;
+        else if('{{All_request.Level_1}}' == 'delivery_send_time_incr')
+            document.getElementById("Level_1").selectedIndex = 3;
+        else if('{{All_request.Level_1}}' == 'delivery_send_time_desc')
+            document.getElementById("Level_1").selectedIndex = 4;
+        else if('{{All_request.Level_1}}' == 'delivery_receive_time_incr')
+            document.getElementById("Level_1").selectedIndex = 5;
+        else if('{{All_request.Level_1}}' == 'delivery_receive_time_desc')
+            document.getElementById("Level_1").selectedIndex = 6;
+        else if('{{All_request.Level_1}}' == 'goods_num_incr')
+            document.getElementById("Level_1").selectedIndex = 7;
+        else if('{{All_request.Level_1}}' == 'goods_num_desc')
+            document.getElementById("Level_1").selectedIndex = 8;
+        else if('{{All_request.Level_1}}' == 'branch_id_incr')
+            document.getElementById("Level_1").selectedIndex = 9;
+        else if('{{All_request.Level_1}}' == 'branch_id_desc')
+            document.getElementById("Level_1").selectedIndex = 10;
+        else if('{{All_request.Level_1}}' == 'storage_id_incr')
+            document.getElementById("Level_1").selectedIndex = 11;
+        else if('{{All_request.Level_1}}' == 'storage_id_desc')
+            document.getElementById("Level_1").selectedIndex = 12;
+        else if('{{All_request.Level_1}}' == 'goods_id_incr')
+            document.getElementById("Level_1").selectedIndex = 13;
+        else if('{{All_request.Level_1}}' == 'goods_id_desc')
+            document.getElementById("Level_1").selectedIndex = 14;
+        else if('{{All_request.Level_1}}' == 'staff_id_incr')
+            document.getElementById("Level_1").selectedIndex = 15;
+        else if('{{All_request.Level_1}}' == 'staff_id_desc')
+            document.getElementById("Level_1").selectedIndex = 16;
+
+        if('{{All_request.Level_2}}' == 'delivery_id_incr')
+            document.getElementById("Level_2").selectedIndex = 1;
+        else if('{{All_request.Level_2}}' == 'delivery_id_desc')
+            document.getElementById("Level_2").selectedIndex = 2;
+        else if('{{All_request.Level_2}}' == 'delivery_send_time_incr')
+            document.getElementById("Level_2").selectedIndex = 3;
+        else if('{{All_request.Level_2}}' == 'delivery_send_time_desc')
+            document.getElementById("Level_2").selectedIndex = 4;
+        else if('{{All_request.Level_2}}' == 'delivery_receive_time_incr')
+            document.getElementById("Level_2").selectedIndex = 5;
+        else if('{{All_request.Level_2}}' == 'delivery_receive_time_desc')
+            document.getElementById("Level_2").selectedIndex = 6;
+        else if('{{All_request.Level_2}}' == 'goods_num_incr')
+            document.getElementById("Level_2").selectedIndex = 7;
+        else if('{{All_request.Level_2}}' == 'goods_num_desc')
+            document.getElementById("Level_2").selectedIndex = 8;
+        else if('{{All_request.Level_2}}' == 'branch_id_incr')
+            document.getElementById("Level_2").selectedIndex = 9;
+        else if('{{All_request.Level_2}}' == 'branch_id_desc')
+            document.getElementById("Level_2").selectedIndex = 10;
+        else if('{{All_request.Level_2}}' == 'storage_id_incr')
+            document.getElementById("Level_2").selectedIndex = 11;
+        else if('{{All_request.Level_2}}' == 'storage_id_desc')
+            document.getElementById("Level_2").selectedIndex = 12;
+        else if('{{All_request.Level_2}}' == 'goods_id_incr')
+            document.getElementById("Level_2").selectedIndex = 13;
+        else if('{{All_request.Level_2}}' == 'goods_id_desc')
+            document.getElementById("Level_2").selectedIndex = 14;
+        else if('{{All_request.Level_2}}' == 'staff_id_incr')
+            document.getElementById("Level_2").selectedIndex = 15;
+        else if('{{All_request.Level_2}}' == 'staff_id_desc')
+            document.getElementById("Level_2").selectedIndex = 16;
+
+        if('{{All_request.Level_3}}' == 'delivery_id_incr')
+            document.getElementById("Level_3").selectedIndex = 1;
+        else if('{{All_request.Level_3}}' == 'delivery_id_desc')
+            document.getElementById("Level_3").selectedIndex = 2;
+        else if('{{All_request.Level_3}}' == 'delivery_send_time_incr')
+            document.getElementById("Level_3").selectedIndex = 3;
+        else if('{{All_request.Level_3}}' == 'delivery_send_time_desc')
+            document.getElementById("Level_3").selectedIndex = 4;
+        else if('{{All_request.Level_3}}' == 'delivery_receive_time_incr')
+            document.getElementById("Level_3").selectedIndex = 5;
+        else if('{{All_request.Level_3}}' == 'delivery_receive_time_desc')
+            document.getElementById("Level_3").selectedIndex = 6;
+        else if('{{All_request.Level_3}}' == 'goods_num_incr')
+            document.getElementById("Level_3").selectedIndex = 7;
+        else if('{{All_request.Level_3}}' == 'goods_num_desc')
+            document.getElementById("Level_3").selectedIndex = 8;
+        else if('{{All_request.Level_3}}' == 'branch_id_incr')
+            document.getElementById("Level_3").selectedIndex = 9;
+        else if('{{All_request.Level_3}}' == 'branch_id_desc')
+            document.getElementById("Level_3").selectedIndex = 10;
+        else if('{{All_request.Level_3}}' == 'storage_id_incr')
+            document.getElementById("Level_3").selectedIndex = 11;
+        else if('{{All_request.Level_3}}' == 'storage_id_desc')
+            document.getElementById("Level_3").selectedIndex = 12;
+        else if('{{All_request.Level_3}}' == 'goods_id_incr')
+            document.getElementById("Level_3").selectedIndex = 13;
+        else if('{{All_request.Level_3}}' == 'goods_id_desc')
+            document.getElementById("Level_3").selectedIndex = 14;
+        else if('{{All_request.Level_3}}' == 'staff_id_incr')
+            document.getElementById("Level_3").selectedIndex = 15;
+        else if('{{All_request.Level_3}}' == 'staff_id_desc')
+            document.getElementById("Level_3").selectedIndex = 16;
+
+    }
+
+</script>
 
 </html>
