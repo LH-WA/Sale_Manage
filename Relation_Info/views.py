@@ -165,7 +165,7 @@ def company_branch_delivery(request):
         # print('POST内容: ', request.POST)
         return render(request, 'Company_Branch_Delivery.html',
                       {'bill_lists': bill_lists, 'Dist': Temp, 'State': State, 'New_id': Max_id + 1,
-                       'Edit_id': Edit_id, 'All_request': request.POST})
+                       'Edit_id': Edit_id, 'All_request': request.POST, 'bill_len': len(bill_lists)})
 
     Edit_id_branch_id = ''
     Edit_id_branch_district = ''

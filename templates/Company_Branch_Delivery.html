@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <title>采购信息录入</title>
-    <script type="text/javascript">
-    </script>
-
-
 </head>
 
 <body onload="Select_record()" >
@@ -20,10 +16,6 @@
                 <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
                         {% csrf_token %}
-                        <script type="text/javascript">
-                        Level("Level_1");
-                        Level('Level_2');
-                        </script>
                         <select name="Delivery_id_Sort" style="font-size: 15pt; margin-top:10px" id="Delivery_id_Sort">
                             <option value="">单号</option>
                             <option value="delivery_id_incr">升序</option>
@@ -131,6 +123,7 @@
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
                         {% csrf_token %}
                         {% if bill_lists %}
+                        <output style="color: red;">共有{{bill_len}}条查询记录</output>
                         {% for bill in bill_lists%}
                         <div class="field">
                             <label></label>
@@ -375,7 +368,6 @@
             document.getElementById("Level_3").selectedIndex = 15;
         else if('{{All_request.Level_3}}' == 'staff_id_desc')
             document.getElementById("Level_3").selectedIndex = 16;
-
     }
 
 </script>
