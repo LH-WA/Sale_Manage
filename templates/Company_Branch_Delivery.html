@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>采购信息录入</title>
+</head>
+
+<body onload="Select_record()">
+<div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+    <div class="ui stackable centered column grid">
+        <div class="centered row">
+            <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                    <form action="/company_branch_delivery/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <select name="Delivery_id_Sort" style="font-size: 15pt; margin-top:10px" id="Delivery_id_Sort">
+                            <option value="" >单号</option>
+                            <option value="delivery_id_incr">升序</option>
+                            <option value="delivery_id_desc">降序</option>
+                        </select>
+                        <select name="Staff_id_Sort" style="font-size: 15pt; margin-top:10px">
+                            <option value="">员工号</option>
+                            <option value="staff_id_incr">升序</option>
+                            <option value="staff_id_desc">降序</option>
+                        </select>
+                        <select name="Branch_id_Sort" style="font-size: 15pt; margin-top:10px">
+                            <option value="">门店号</option>
+                            <option value="branch_id_incr">升序</option>
+                            <option value="branch_id_desc">降序</option>
+                        </select>
+
+                        <select name="Multistage_query" style="font-size: 15pt; margin-top:10px">
+                            <option value="">单项排序</option>
+                            <option value="多级排序">多级排序</option>
+                        </select>
+                        <select name="Level_1" style="font-size: 15pt; margin-top:10px">
+                            <option value="">一级排序依据</option>
+                            <option value="delivery_id_incr">配送单号(顺序)</option>
+                            <option value="delivery_id_desc">配送单号(逆序)</option>
+                            <option value="delivery_send_time_incr">发货时间(顺序)</option>
+                            <option value="delivery_send_time_desc">发货时间(逆序)</option>
+                            <option value="delivery_receive_time_incr">收货时间(顺序)</option>
+                            <option value="delivery_receive_time_desc">收货时间(逆序)</option>
+                            <option value="goods_num_incr">配送数量(顺序)</option>
+                            <option value="goods_num_desc">配送数量(逆序)</option>
+                            <option value="branch_id_incr">门店号(顺序)</option>
+                            <option value="branch_id_desc">门店号(逆序)</option>
+                            <option value="storage_id_incr">仓库号(顺序)</option>
+                            <option value="storage_id_desc">仓库号(逆序)</option>
+                            <option value="goods_id_incr">商品码(顺序)</option>
+                            <option value="goods_id_desc">商品码(逆序)</option>
+                            <option value="staff_id_incr">配送员工号(顺序)</option>
+                            <option value="staff_id_desc">配送员工号(逆序)</option>
+                        </select>
+                        <select name="Level_2" style="font-size: 15pt; margin-top:10px">
+                            <option value="">二级排序依据</option>
+                            <option value="delivery_id_incr">配送单号(顺序)</option>
+                            <option value="delivery_id_desc">配送单号(逆序)</option>
+                            <option value="delivery_send_time_incr">发货时间(顺序)</option>
+                            <option value="delivery_send_time_desc">发货时间(逆序)</option>
+                            <option value="delivery_receive_time_incr">收货时间(顺序)</option>
+                            <option value="delivery_receive_time_desc">收货时间(逆序)</option>
+                            <option value="goods_num_incr">配送数量(顺序)</option>
+                            <option value="goods_num_desc">配送数量(逆序)</option>
+                            <option value="branch_id_incr">门店号(顺序)</option>
+                            <option value="branch_id_desc">门店号(逆序)</option>
+                            <option value="storage_id_incr">仓库号(顺序)</option>
+                            <option value="storage_id_desc">仓库号(逆序)</option>
+                            <option value="goods_id_incr">商品码(顺序)</option>
+                            <option value="goods_id_desc">商品码(逆序)</option>
+                            <option value="staff_id_incr">配送员工号(顺序)</option>
+                            <option value="staff_id_desc">配送员工号(逆序)</option>
+                        </select>
+                        <select name="Level_3" style="font-size: 15pt; margin-top:10px">
+                            <option value="">三级排序依据</option>
+                            <option value="delivery_id_incr">配送单号(顺序)</option>
+                            <option value="delivery_id_desc">配送单号(逆序)</option>
+                            <option value="delivery_send_time_incr">发货时间(顺序)</option>
+                            <option value="delivery_send_time_desc">发货时间(逆序)</option>
+                            <option value="delivery_receive_time_incr">收货时间(顺序)</option>
+                            <option value="delivery_receive_time_desc">收货时间(逆序)</option>
+                            <option value="goods_num_incr">配送数量(顺序)</option>
+                            <option value="goods_num_desc">配送数量(逆序)</option>
+                            <option value="branch_id_incr">门店号(顺序)</option>
+                            <option value="branch_id_desc">门店号(逆序)</option>
+                            <option value="storage_id_incr">仓库号(顺序)</option>
+                            <option value="storage_id_desc">仓库号(逆序)</option>
+                            <option value="goods_id_incr">商品码(顺序)</option>
+                            <option value="goods_id_desc">商品码(逆序)</option>
+                            <option value="staff_id_incr">配送员工号(顺序)</option>
+                            <option value="staff_id_desc">配送员工号(逆序)</option>
+                        </select>
+
+                        <label style="color: red;">{{ msg_1 }}</label>
+                        <div class="field">
+                            <label for="Search_Staff_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
+                                   name="Search_Staff_id" value="{{All_request.Search_Staff_id}}">
+                        </div>
+                        <select name="Search_Branch_id" style="font-size: 15pt; margin-top:10px">
+                            <option value="">所有分店</option>
+                            {% for item_1,item_2 in Dist %}
+                            <option value="{{item_1}}">{{item_2}}</option>
+                            {% endfor %}
+                        </select>
+                        <label style="color: red;">{{ msg_2 }}</label>
+                        <div class="field">
+                            <label for="Search_Goods_delivery_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
+                                   name="Search_Goods_delivery_id" value="{{All_request.Search_Goods_delivery_id}}">
+                        </div>
+
+                        <input type="submit" value="确认"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                        <input type="date" name="Time_begin" value="开始时间">
+                        <input type="date" name="Time_end" value="结束时间">
+                    </form>
+
+                    <form action="/company_branch_delivery/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        {% if bill_lists %}
+                            {% for bill in bill_lists%}
+                            <div class="field">
+                                <label></label>
+                                <output>单号:{{bill.goods_delivery_id}}</output>
+                                <label></label>
+                                <output>发货时间:{{bill.goods_delivery_send_time}}</output>
+                                <label></label>
+                                <output>收货时间:{{bill.goods_delivery_receive_time}}</output>
+                                <label></label>
+                                <output>配送数量:{{bill.goods_num}}</output>
+                                <label></label>
+                                <output>门店号:{{bill.delivery_branch_id.branch_id}}</output>
+                                <label></label>
+                                <output>仓库号:{{bill.delivery_storage_id.storage_id}}</output>
+                                <label></label>
+                                <output>商品码:{{bill.delivery_goods_id.goods_id}}</output>
+                                <label></label>
+                                <output>物流员工:{{bill.goods_delivery_staff_id.user_account}}</output>
+                                <label></label>
+                                <a class="item" href="/company_branch_delivery/?Edit_id={{bill.goods_delivery_id}}">修改</a>
+                                <a class="item" href="/company_branch_delivery/?Delete_id={{bill.goods_delivery_id}}">删除</a>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <label style="color: red;">无查询结果</label>
+                        {% endif %}
+                        <h2 style="color: black;" align="center">采购信息录入</h2>
+                        <div class="field">
+                            <output>采购单号:{{New_id}}</output>
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <div class="field">
+                            <label for="new_goods_delivery_send_time"></label>
+                            <input placeholder="配送时间" type="date" name="new_goods_delivery_send_time" required
+                                   autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="new_goods_delivery_receive_time"></label>
+                            <input placeholder="接收时间" type="date" name="new_goods_delivery_receive_time"
+                                   autocomplete="off">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
+                        <div class="field">
+                            <label for="new_goods_num"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="配送数量" type="number"
+                                   name="new_goods_num" required>
+                        </div>
+                        <select name="new_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
+                            {% for item_1,item_2 in Dist %}
+                            <option value="{{item_1}}">{{item_2}}</option>
+                            {% endfor %}
+                        </select>
+                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <div class="field">
+                            <label for="new_delivery_storage_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
+                                   name="new_delivery_storage_id" required>
+                        </div>
+                        <div class="field">
+                            <label for="new_delivery_goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
+                                   name="new_delivery_goods_id" required>
+                        </div>
+                        <div class="field">
+                            <label for="new_goods_delivery_staff_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
+                                   name="new_goods_delivery_staff_id" required>
+                        </div>
+                        <input type="submit" value="确认加入"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% if State == 1 %}
+                    <form action="/company_branch_delivery/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <h2 style="color: black;" align="center">采购信息修改</h2>
+                        <div class="field">
+                            <output>修改单号:{{Edit_id}}</output>
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <div class="field">
+                            <label for="edit_goods_delivery_send_time"></label>
+                            <input type="date" name="edit_goods_delivery_send_time">
+                        </div>
+                        <div class="field">
+                            <label for="edit_goods_delivery_receive_time"></label>
+                            <input type="date" name="edit_goods_delivery_receive_time">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
+                        <div class="field">
+                            <label for="edit_goods_num"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="配送数量" type="number"
+                                   name="edit_goods_num">
+                        </div>
+                        <select name="edit_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
+                            <option value="{{Edit_id_branch_id}}">{{Edit_id_branch_district}}</option>
+                            {% for item_1,item_2 in Dist %}
+                            <option value="{{item_1}}">{{item_2}}</option>
+                            {% endfor %}
+                        </select>
+                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <div class="field">
+                            <label for="edit_delivery_storage_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
+                                   name="edit_delivery_storage_id">
+                        </div>
+                        <div class="field">
+                            <label for="edit_delivery_goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
+                                   name="edit_delivery_goods_id">
+                        </div>
+                        <div class="field">
+                            <label for="edit_goods_delivery_staff_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
+                                   name="edit_goods_delivery_staff_id">
+                        </div>
+                        <input type="submit" value="确认修改"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+    <script type="text/javascript">
+        function Select_record() {
+            document.getElementById("Delivery_id_Sort").selectedIndex = "delivery_id_incr";
+        }
+    </script>
+
+</html>

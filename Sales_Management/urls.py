@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Entity_Info.views import index, logins, regist, logout, show_chart, goods_info_input, supplier_info_input
+from Entity_Info.views import index, logins, regist, logout, test, goods_info_input, supplier_info_input
 from Relation_Info.views import company_branch_delivery
 
 urlpatterns = [
@@ -24,8 +24,9 @@ urlpatterns = [
     path('login/', logins),
     path('regist/', regist),
     path('logout/', logout),
-    path('show/', show_chart),
     path('goods_info_input/', goods_info_input),
     path('supplier_info_input/', supplier_info_input),
-    path('test/', company_branch_delivery),
+    path('company_branch_delivery/', company_branch_delivery),
+    # path('test2/', company_branch_delivery_show),
+    path('test/', test),
 ]

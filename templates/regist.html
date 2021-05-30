@@ -27,20 +27,23 @@
                   <form action="/regist/" method="POST" class="ui form" >
                     {% csrf_token %}
                     <h2 style="color: black;" align="center">欢迎注册</h2>
-                    <label style="color: red;" >{{ msg_1 }}</label>
+<!--                    <label style="color: red;" >{{ msg_1 }}</label>-->
+<!--                    <div class="field">-->
+<!--                      <label for="Account"></label>-->
+<!--                      <input style="font-size: 15pt; margin-top:0px" placeholder="8位数字 员工账号" type="number" name="Account" required autocomplete="off">-->
+<!--                    </div>-->
                     <div class="field">
-                      <label for="Account"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="8位数字 员工账号" type="number" name="Account" required autocomplete="off">
-                    </div>
+                      <output >账号:{{Account}}</output>
+                     </div>
                     <label style="color: red;" >{{ msg_2 }}</label>
                     <div class="field">
                       <label for="Name"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工姓名" type="text" name="Name" required autocomplete="off">
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工姓名" type="text" name="Name" required autocomplete="on">
                     </div>
                     <label style="color: red;" >{{ msg_3 }}</label>
                     <div class="field">
                       <label for="Tel"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工电话" type="text" name="Tel" required autocomplete="off">
+                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工电话" type="text" name="Tel" required autocomplete="on">
                     </div>
                     <div class="field">
                       <label for="Password"></label>
@@ -54,16 +57,13 @@
                       <label style="color: red;">{{ msg_5 }}</label>
                       <select name="Branch" style="font-size: 15pt; margin-top:10px" >
                         <option value="00">所属分店片区</option>
-                        {% for item in Dist %}
-                          <option value="{{item}}">{{item}}</option>
-<!--                        <option value="杨浦区">杨浦区</option>-->
-<!--                        <option value="虹口区">虹口区</option>-->
-<!--                        <option value="浦东区">浦东区</option>-->
-<!--                        <option value="宝钢区">宝山区</option>-->
+                        {% for item_1,item_2 in Dist %}
+                          <option value="{{item_1}}">{{item_2}}</option>
                         {% endfor %}
+
                       </select>
                       <label style="color: red;" >{{ msg_6 }}</label>
-                      <select name="Section" style="font-size: 15pt; margin-top:10px" >
+                      <select name="Department" style="font-size: 15pt; margin-top:10px" >
                         <option value="00">所属部门</option>
                         <option value="管理部门">管理部门</option>
                         <option value="销售部门">销售部门</option>

@@ -40,18 +40,18 @@
       <div class="centered row">
         <div class="six wide column">
           <div style="padding-bottom: 5em; background-color: rgba(245, 245, 245,0.4);" class="ui segment">
-            <form action="/login/" method="POST" class="ui form" onsubmit="return check()">
+            <form action="/login/" method="POST" class="ui form" onsubmit="return check()" >
               {% csrf_token %}
               <h2 style="color: black;" align="center">系统登入</h2>
               <label style="color: red;">{{ msg_1 }}</label>
               <div class="field">
                 <label for="username"></label>
-                <input style="font-size: 15pt; margin-top:10px" placeholder="用户名" type="number" name="username" required>
+                <input style="font-size: 15pt; margin-top:10px" placeholder="用户名" value="{{username}}" type="number" name="username" required>
               </div>
               <label style="color: red;">{{ msg_2 }}</label>
               <div class="field">
                 <label for="password"></label>
-                <input style="font-size: 15pt; margin-top:10px" placeholder="密码" type="password" name="password" required>
+                <input style="font-size: 15pt; margin-top:10px" placeholder="密码" value="{{password}}" type="password" name="password" required>
               </div>
               <input id="vcode" placeholder="验证码" type="text" onfocus="this.value=''" onblur="if(this.value=='')this.value='验证码'" autocomplete="off" >
               <span id="code" title="看不清，换一张"></span>

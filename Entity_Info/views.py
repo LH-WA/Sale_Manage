@@ -1,5 +1,6 @@
-from django.shortcuts import render,redirect
-from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.shortcuts import render, redirect, HttpResponse
+from django.forms import Form, fields, widgets
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
@@ -11,20 +12,25 @@ from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
-def index(request):
 
+class TestForm(Form):
+    inp1 = fields.CharField(min_length=4, max_length=8)
+    inp2 = fields.EmailField()
+    inp3 = fields.IntegerField(min_value=10, max_value=100)
+
+
+def index(request):
     return render(request, 'index.html')
+
 
 def logins(request):
     if request.method == 'POST':
         username = request.POST.get("username")
         password = request.POST.get("password")
         if not User_Info.objects.filter(user_account=username):
-            msg_1 = '账号不存在！'
-            return render(request, 'login.html', locals())
-        if not User_Info.objects.filter(user_account=username,user_psw=password):
-            msg_2 = '密码错误！'
-            return render(request, 'login.html', locals())
+            return render(request, 'login.html', {'msg_1': '账号不存在！', 'username': username, 'password': password})
+        if not User_Info.objects.filter(user_account=username, user_psw=password):
+            return render(request, 'login.html', {'msg_2': '密码错误！', 'username': username, 'password': password})
         request.session['is_login'] = True
         request.session['username'] = username
         request.session['password'] = password
@@ -33,60 +39,65 @@ def logins(request):
 
 
 def regist(request):
+    Temp = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')]
+    Account_list = ([item for item in User_Info.objects.values('user_account')])
+    Account = max([item['user_account'] for item in Account_list]) + 1
+
     if request.method == 'POST':
-        Account = request.POST.get("Account")
+        # Account = request.POST.get("Account")
         Name = request.POST.get("Name")
         Tel = request.POST.get("Tel")
         Password = request.POST.get("Password")
         Password_r = request.POST.get("Password_r")
         Branch = request.POST.get("Branch")
-        Section = request.POST.get("Section")
-        if len(Account) != 8:
-            msg_1 = '账号长度应为8位'
-            return render(request, 'regist.html', locals())
-        elif Account.isdigit() == False :
-            msg_1 = '账号应只含数字'
-            return render(request, 'regist.html', locals())
-        elif Account.count(' ') != 0:
-            msg_1 = '账号应不含空格'
-            return render(request, 'regist.html', locals())
-        elif User_Info.objects.filter(user_account=Account):
-            msg_1 = '账号重复'
-            return render(request, 'regist.html', locals())
+        Department = request.POST.get("Department")
+        # if len(Account) != 8:
+        #     msg_1 = '账号长度应为8位'
+        #     return render(request, 'regist.html', {'Dist': Temp})
+        # elif Account.isdigit() == False :
+        #     msg_1 = '账号应只含数字'
+        #     return render(request, 'regist.html', {'Dist': Temp})
+        # elif Account.count(' ') != 0:
+        #     msg_1 = '账号应不含空格'
+        #     return render(request, 'regist.html', {'Dist': Temp})
+        # elif User_Info.objects.filter(user_account=Account):
+        #     msg_1 = '账号重复'
+        #     return render(request, 'regist.html', {'Dist': Temp})
 
         if len(Name) >= 8:
             msg_2 = '员工名字大于8位'
-            return render(request, 'regist.html', locals())
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
 
-        if len(Tel) >= 11:
+        if len(Tel) > 11:
             msg_3 = '电话号码大于11位'
-            return render(request, 'regist.html', locals())
-        elif len(Tel) <= 7:
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
+        elif len(Tel) < 7:
             msg_3 = '电话号码小于7位'
-            return render(request, 'regist.html', locals())
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
 
         if len(Password) < 5 or len(Password) > 8:
             msg_4 = '密码长度应为6-8位字符'
-            return render(request, 'regist.html', locals())
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
         elif Password != Password_r:
             msg_4 = '两次输入密码不一样！'
-            return render(request, 'regist.html', locals())
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
 
-        if Branch=='00':
+        if Branch == '00':
             msg_5 = '请选择所属分店'
-            return render(request, 'regist.html', locals())
-        if Section=='00':
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
+        if Department == '00':
             msg_6 = '请选择所属部门'
-            return render(request, 'regist.html', locals())
-        User_Info.objects.create(user_account=Account,user_psw=Password,user_branch=Branch,user_dep=Section)
+            return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
+        User_Info.objects.create(user_account=Account, user_psw=Password, user_name=Name, user_tel=Tel,
+                                 user_branch_id=Branch, user_dep=Department)
 
         return redirect('/login/')
 
-    return render(request, 'regist.html',{'Dist': [list(item.values())[0] for item in Branch_Info.objects.values('branch_district')]})
+    return render(request, 'regist.html', {'Dist': Temp, 'Account': Account})
 
 
 def logout(request):
-    if not request.session.get('is_login',None):
+    if not request.session.get('is_login', None):
         return redirect('/login/')
 
     request.session.flush()
@@ -105,9 +116,11 @@ def goods_info_input(request):
             msg_1 = '商品信息已存在'
             return render(request, 'goods_input.html', locals())
 
-        Goods_Info.objects.create(goods_id=Id, goods_name=Name, goods_category=Category, goods_unit=Unit, goods_price=Price)
+        Goods_Info.objects.create(goods_id=Id, goods_name=Name, goods_category=Category, goods_unit=Unit,
+                                  goods_price=Price)
 
     return render(request, 'goods_input.html')
+
 
 def supplier_info_input(request):
     if request.method == 'POST':
@@ -121,9 +134,11 @@ def supplier_info_input(request):
             msg_1 = '供应商信息已存在'
             return render(request, 'goods_new_input.html', locals())
 
-        Supplier_Info.objects.create(supplier_id=Id, supplier_name=Name, supplier_mail=Mail, supplier_tel=Tel, supplier_address=Address)
+        Supplier_Info.objects.create(supplier_id=Id, supplier_name=Name, supplier_mail=Mail, supplier_tel=Tel,
+                                     supplier_address=Address)
 
     return render(request, 'goods_new_input.html')
+
 
 def branch_info_input(request):
     if request.method == 'POST':
@@ -153,19 +168,14 @@ def storage_info_input(request):
 
     return render(request, 'goods_new_input.html')
 
-def show_chart(request):
-    Goods = ['河马', '蟒蛇', '老虎', '大象', '兔子', '熊猫', '狮子']
-    Value1 = [135, 37, 72, 150, 21, 98, 51]
-    Value2 = [15, 56, 42, 10, 21, 98, 51]
 
-    bar = (
-        Bar()
-            .add_xaxis(Goods)
-            .add_yaxis("商家A", Value1)
-            .add_yaxis("商家B", Value2)
-            # .reversal_axis()
-            # .set_series_opts(label_opts=opts.LabelOpts(position="right"))
-            .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-    )
-    data = {'data': bar.render_embed()}
-    return render(request, 'Pyechart.html', data)
+
+def test(request):
+    if request.method == 'GET':
+        obj = TestForm()
+        # return render(request, 'test.html', {'obj': obj})
+    else:
+        obj = TestForm(request.POST)
+        if obj.is_valid():
+            return HttpResponse('提交成功')
+    return render(request, 'test.html', {'obj': obj})
