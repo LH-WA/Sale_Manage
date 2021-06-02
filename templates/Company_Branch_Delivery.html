@@ -8,7 +8,7 @@
     <title>采购信息录入</title>
 </head>
 
-<body onload="Select_record()" >
+<body onload="Select_record()">
 <div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
     <div class="ui stackable centered column grid">
         <div class="centered row">
@@ -112,12 +112,11 @@
                             <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
                                    name="Search_Goods_delivery_id" value="{{All_request.Search_Goods_delivery_id}}">
                         </div>
-
+                        <input type="date" name="Time_begin" value="开始时间">
+                        <input type="date" name="Time_end" value="结束时间">
                         <input type="submit" value="确认"
                                style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
                                class="ui button">
-                        <input type="date" name="Time_begin" value="开始时间">
-                        <input type="date" name="Time_end" value="结束时间">
                     </form>
 
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
@@ -150,6 +149,25 @@
                         {% else %}
                         <label style="color: red;">无查询结果</label>
                         {% endif %}
+
+                        <div class="pagenation">
+                            {% if bill_lists.has_previous %}
+                            <a href="/company_branch_delivery/?page={{ bill_lists.previous_page_number }}">上一页</a>
+                            {% endif %}
+
+                            {% for index in paginator.page_range %}
+                            {% if index == bill_lists.number %}
+                            <a href="/company_branch_delivery/?page={{ index }}" class="active">{{ index }}</a>
+                            {% else %}
+                            <a href="/company_branch_delivery/?page={{ index }}">{{ index }}</a>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if bill_lists.has_next %}
+                            <a href="/company_branch_delivery/?page={{ bill_lists.next_page_number }}">下一页></a>
+                            {% endif %}
+                        </div>
+
                         <h2 style="color: black;" align="center">采购信息录入</h2>
                         <div class="field">
                             <output>采购单号:{{New_id}}</output>
@@ -168,7 +186,7 @@
                         <div class="field">
                             <label for="new_goods_num"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="配送数量" type="number"
-                                   name="new_goods_num" required >
+                                   name="new_goods_num" required>
                         </div>
                         <select name="new_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
                             {% for item_1,item_2 in Dist %}
@@ -181,13 +199,13 @@
                             <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
                                    name="new_delivery_storage_id" required>
                         </div>
-                        <label style="color: red;" >{{ Msg.msg_4 }}</label>
+                        <label style="color: red;">{{ Msg.msg_4 }}</label>
                         <div class="field">
                             <label for="new_delivery_goods_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
                                    name="new_delivery_goods_id" required>
                         </div>
-                        <label style="color: red;" >{{ Msg.msg_5 }}</label>
+                        <label style="color: red;">{{ Msg.msg_5 }}</label>
                         <div class="field">
                             <label for="new_goods_delivery_staff_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
@@ -369,6 +387,9 @@
         else if('{{All_request.Level_3}}' == 'staff_id_desc')
             document.getElementById("Level_3").selectedIndex = 16;
     }
+
+
+
 
 </script>
 
