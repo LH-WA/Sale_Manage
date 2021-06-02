@@ -15,44 +15,6 @@
 </head>
 
 <body >
-    <div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
-          <div class="ui stackable centered column grid">
-            <div class="centered row">
-              <div class="six wide column">
-                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
-                  <form action="/test2/" method="POST" class="ui form" >
-                      {% csrf_token %}
-                    <select name="Sort_way" style="font-size: 15pt; margin-top:10px" >
-                        <option value="逆序">单号逆序排列</option>
-                        <option value="顺序">单号顺序排列</option>
-                      </select>
-                      <label style="color: red;">{{ msg_1 }}</label>
-                    <div class="field">
-                      <label for="Staff_id"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number" name="Staff_id">
-                    </div>
-                      <label style="color: red;">{{ msg_2 }}</label>
-                      <select name="Branch_id" style="font-size: 15pt; margin-top:10px" >
-                        <option value="">所有分店</option>
-                        {% for item_1,item_2 in Dist %}
-                          <option value="{{item_1}}">{{item_2}}</option>
-                        {% endfor %}
-                      </select>
-                      <label style="color: red;">{{ msg_3 }}</label>
-                    <div class="field">
-                      <label for="Goods_delivery_id"></label>
-                      <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number" name="Goods_delivery_id">
-                    </div>
-                    <input type="submit" id="submit" value="确认" style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%" class="ui button" >
-                      <input type="date" name="Time_begin" value="开始时间">
-                      <input type="date" name="Time_end" value="结束时间">
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-
-    </div>
     {{data|safe}}
 </body>
 

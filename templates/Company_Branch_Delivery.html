@@ -31,6 +31,10 @@
                             <option value="branch_id_incr">升序</option>
                             <option value="branch_id_desc">降序</option>
                         </select>
+                        <select name="Show_state" style="font-size: 15pt; margin-top:10px" id="Show_state">
+                            <option value="">不显示chart</option>
+                            <option value="1">显示</option>
+                        </select>
 
                         <select name="Multistage_query" style="font-size: 15pt; margin-top:10px">
                             <option value="">单项排序</option>
@@ -101,9 +105,9 @@
                                    name="Search_Staff_id" value="{{All_request.Search_Staff_id}}">
                         </div>
                         <select name="Search_Branch_id" style="font-size: 15pt; margin-top:10px" id="Search_Branch_id">
-                            <option value="">所有分店</option>
+                            <option value="All">所有分店</option>
                             {% for item_1,item_2 in Dist %}
-                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
+                                <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
                             {% endfor %}
                         </select>
                         <label style="color: red;">{{ Msg.msg_2 }}</label>
@@ -112,11 +116,13 @@
                             <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
                                    name="Search_Goods_delivery_id" value="{{All_request.Search_Goods_delivery_id}}">
                         </div>
-                        <input type="date" name="Time_begin" value="开始时间">
-                        <input type="date" name="Time_end" value="结束时间">
+                        <input type="date" name="Search_Time_begin" value="{{All_request.Search_Time_begin}}">
+                        <input type="date" name="Search_Time_end" value="{{All_request.Search_Time_end}}">
                         <input type="submit" value="确认"
                                style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
                                class="ui button">
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button" href="/company_branch_delivery/?Reset=1">Reset</a>
                     </form>
 
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
@@ -146,8 +152,9 @@
                             <a class="item" href="/company_branch_delivery/?Delete_id={{bill.goods_delivery_id}}">删除</a>
                         </div>
                         {% endfor %}
+
                         {% else %}
-                        <label style="color: red;">无查询结果</label>
+                            <label style="color: red;">无查询结果</label>
                         {% endif %}
 
                         <div class="pagenation">
@@ -215,7 +222,7 @@
                                style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
                                class="ui button">
                     </form>
-                    {% if State == 1 %}
+                    {% if Edit_id %}
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
                         {% csrf_token %}
                         <h2 style="color: black;" align="center">采购信息修改</h2>
@@ -240,7 +247,7 @@
                         <select name="edit_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
                             <option value="{{Edit_id_branch_id}}">{{Edit_id_branch_district}}</option>
                             {% for item_1,item_2 in Dist %}
-                            <option value="{{item_1}}">{{item_2}}</option>
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
                             {% endfor %}
                         </select>
                         <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
@@ -269,6 +276,7 @@
         </div>
     </div>
 </div>
+    {{data|safe}}
 </body>
 
 <script type="text/javascript">
@@ -286,7 +294,10 @@
         else if('{{All_request.Branch_id_Sort}}' == 'branch_id_desc')
             document.getElementById("Branch_id_Sort").selectedIndex = 2;
 
-        document.getElementById("Search_Branch_id").selectedIndex = {{All_request.Search_Branch_id}};
+        if('{{All_request.Search_Branch_id}}' == 'All')
+            document.getElementById("Search_Branch_id").selectedIndex = 0;
+        else
+            document.getElementById("Search_Branch_id").selectedIndex = {{All_request.Search_Branch_id}};
 
         if('{{All_request.Level_1}}' == 'delivery_id_incr')
             document.getElementById("Level_1").selectedIndex = 1;
@@ -387,9 +398,6 @@
         else if('{{All_request.Level_3}}' == 'staff_id_desc')
             document.getElementById("Level_3").selectedIndex = 16;
     }
-
-
-
 
 </script>
 

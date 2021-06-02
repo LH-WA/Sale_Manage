@@ -10,20 +10,18 @@ from Relation_Info.models import Company_Branch_Delivery
 from Entity_Info.models import User_Info, Branch_Info, Storage_Info, Goods_Info
 from datetime import date
 
-
 # Create your views here.
 class Record(object):
     count = 0  # Record.count是静态变量
 
 
 def company_branch_delivery(request):
-    Temp = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')][1:]
+    District_list = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')][1:]
     Edit_id = request.GET.get("Edit_id", '')
     Page_id = request.GET.get('page', 1)
-    State = 0
     if Edit_id:
-        State = 1
         Record.count = Edit_id
+
     # 删除
     Delete_id = request.GET.get("Delete_id", '')
     if Delete_id:
@@ -31,7 +29,13 @@ def company_branch_delivery(request):
 
     # 删完再查询
     Max_id = max([item['goods_delivery_id'] for item in Company_Branch_Delivery.objects.values('goods_delivery_id')])
-    bill_lists = Company_Branch_Delivery.objects.order_by('-goods_delivery_id')[:5]
+    bill_lists = Company_Branch_Delivery.objects.order_by('-goods_delivery_id')
+    paginator = Paginator(bill_lists, 3)
+    bill_lists = paginator.page(Page_id)
+    if request.GET.get('Reset'):
+        return render(request, 'Company_Branch_Delivery.html',
+                      {'bill_lists': bill_lists, 'Dist': District_list,
+                       'New_id': Max_id + 1, 'bill_len': len(bill_lists), 'paginator': paginator})
     # if request.method == 'POST':
     # 修改
     Edit_goods_delivery_send_time = request.POST.get("edit_goods_delivery_send_time", '')
@@ -69,11 +73,7 @@ def company_branch_delivery(request):
     Search_Time_begin = request.POST.get("Search_Time_begin")
     Search_Time_end = request.POST.get("Search_Time_end")
     Search_Staff_id = request.POST.get("Search_Staff_id")
-    Search_Branch_id = request.POST.get("Search_Branch_id")
-    if not Search_Time_begin:
-        Search_Time_begin = date(2000, 1, 1)
-    if not Search_Time_end:
-        Search_Time_end = date(2029, 12, 31)
+    Search_Branch_id = request.POST.get("Search_Branch_id", 'All')
     Msg = {'msg_1': '', 'msg_2': '', 'msg_3': '', 'msg_4': '', 'msg_5': ''}
     if Search_Staff_id and not User_Info.objects.filter(user_account__contains=Search_Staff_id):
         Msg['msg_1'] = '员工号无此字段'
@@ -82,12 +82,16 @@ def company_branch_delivery(request):
         Msg['msg_2'] = '单号无此字段'
     if Msg['msg_1'] or Msg['msg_2']:
         return render(request, 'Company_Branch_Delivery.html',
-                      {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
+                      {'bill_lists': bill_lists, 'Dist': District_list, 'Msg': Msg,
                        'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST,
-                       'bill_len': len(bill_lists)})
+                       'bill_len': len(bill_lists), 'paginator': paginator})
 
     condition_dict = {}
-    if Search_Branch_id:
+    if not Search_Time_begin:
+        Search_Time_begin = date(2000, 1, 1)
+    if not Search_Time_end:
+        Search_Time_end = date(2029, 12, 31)
+    if Search_Branch_id != 'All':
         condition_dict['delivery_branch_id__branch_id'] = Search_Branch_id
     if Search_Staff_id:
         condition_dict['goods_delivery_staff_id__user_account__contains'] = Search_Staff_id
@@ -110,12 +114,14 @@ def company_branch_delivery(request):
         Msg['msg_4'] = '商品不存在'
     if New_goods_delivery_staff_id and not User_Info.objects.filter(user_account=New_goods_delivery_staff_id):
         Msg['msg_5'] = '员工不存在'
+    elif New_goods_delivery_staff_id and not User_Info.objects.get(user_account=New_goods_delivery_staff_id).user_dep == '物流部门':
+        Msg['msg_5'] = '员工不属物流部门'
 
     if Msg['msg_3'] or Msg['msg_4'] or Msg['msg_5']:
         return render(request, 'Company_Branch_Delivery.html',
-                      {'bill_lists': bill_lists, 'Dist': Temp, 'Msg': Msg, 'State': State,
+                      {'bill_lists': bill_lists, 'Dist': District_list, 'Msg': Msg,
                        'New_id': Max_id + 1, 'Edit_id': Edit_id, 'All_request': request.POST,
-                       'bill_len': len(bill_lists)})
+                       'bill_len': len(bill_lists), 'paginator': paginator})
     if New_goods_delivery_send_time and New_delivery_branch_id and New_delivery_storage_id and New_delivery_goods_id and New_goods_delivery_staff_id:
         Company_Branch_Delivery.objects.create(goods_delivery_id=Max_id + 1,
                                                goods_delivery_send_time=New_goods_delivery_send_time,
@@ -168,14 +174,9 @@ def company_branch_delivery(request):
     bill_lists = bill_lists.order_by(*sort_list)
     bill_lists_len = len(bill_lists)
     # print('POST内容: ', request.POST)
+
     paginator = Paginator(bill_lists, 3)
     bill_lists = paginator.page(Page_id)
-
-    # return render(request, 'Company_Branch_Delivery.html',
-    #               {'bill_lists': bill_lists, 'Dist': Temp, 'State': State, 'New_id': Max_id + 1,
-    #                'Edit_id': Edit_id, 'All_request': request.POST, 'bill_len': len(bill_lists),
-    #                'paginator': paginator})
-
     Edit_id_branch_id = ''
     Edit_id_branch_district = ''
     if Edit_id:
@@ -183,9 +184,10 @@ def company_branch_delivery(request):
             branch_id=Company_Branch_Delivery.objects.get(goods_delivery_id=Edit_id).delivery_branch_id_id)
         Edit_id_branch_district = Edit_id_branch_id.branch_district
     return render(request, 'Company_Branch_Delivery.html',
-                  {'bill_lists': bill_lists, 'Dist': Temp, 'State': State, 'New_id': Max_id + 1, 'Edit_id': Edit_id,
+                  {'bill_lists': bill_lists, 'Dist': District_list, 'New_id': Max_id + 1,
+                   'Edit_id': Edit_id, 'All_request': request.POST, 'bill_len': bill_lists_len,
                    'Edit_id_branch_id': Edit_id_branch_id, 'Edit_id_branch_district': Edit_id_branch_district,
-                   'All_request': request.POST, 'bill_len': bill_lists_len, 'paginator': paginator})
+                   'paginator': paginator})
 
 
 def Sort_condition(mode):
@@ -225,61 +227,26 @@ def Sort_condition(mode):
         return 0
 
 # def company_branch_delivery_show(request):
-#     Temp = [item for item in Branch_Info.objects.values_list('branch_id', 'branch_district')]
-#     if request.method == 'POST':
-#         Time_begin = request.POST.get("Time_begin")
-#         Time_end = request.POST.get("Time_end")
-#         Staff_id = request.POST.get("Staff_id")
-#         Branch_id = request.POST.get("Branch_id")
-#         Goods_delivery_id = request.POST.get("Goods_delivery_id")
-#         if not Time_begin:
-#             Time_begin = date(2000, 1, 1)
-#         if not Time_end:
-#             Time_end = date(2029, 12, 31)
-#
-#         if Staff_id and not User_Info.objects.filter(user_account=Staff_id):
-#             msg_1 = '无此员工'
-#             return render(request, 'Company_Branch_Delivery.html', locals())
-#
-#         if Branch_id and not Branch_Info.objects.filter(branch_id=Branch_id):
-#             msg_2 = '无此门店'
-#             return render(request, 'Company_Branch_Delivery.html', locals())
-#
-#         if Goods_delivery_id and not Company_Branch_Delivery.objects.filter(goods_delivery_id=Goods_delivery_id):
-#             msg_3 = '无此单号'
-#             return render(request, 'Company_Branch_Delivery.html', locals())
-#
-#         condition_dict = {}
-#         if Branch_id:
-#             condition_dict['delivery_branch_id'] = Branch_id
-#         if Staff_id:
-#             condition_dict['goods_delivery_staff_id'] = Staff_id
-#         if Goods_delivery_id:
-#             condition_dict['goods_delivery_id'] = Goods_delivery_id
-#         bill_lists = Company_Branch_Delivery.objects.filter(
-#             **condition_dict, goods_delivery_send_time__range=[Time_begin, Time_end]
-#         )
-#
-#         # District_num= [item.delivery_branch_id_id for item in bill_lists]
-#         District_list = [item['branch_district'] for item in Branch_Info.objects.values('branch_district')]
-#         District_num = len(District_list)
+#     if request.POST.get('Show_state'):
+#         District_name = [item[1] for item in District_list]
+#         District_num = len(District_name)
 #         sum_list = [0] * District_num
 #         for item in bill_lists:
 #             for i in range(1, District_num + 1):
 #                 if item.delivery_branch_id_id == i:
 #                     sum_list[i - 1] = sum_list[i - 1] + item.goods_num
 #
-#         District_value = [(District_list[i], sum_list[i]) for i in range(0, District_num)]
-#
+#         District_value = [(District_name[i], sum_list[i]) for i in range(0, District_num)]
 #         c = (
 #             Map()
 #                 .add("", District_value, "上海",
 #                      is_map_symbol_show=False, )
 #                 .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
-#                 .set_global_opts(title_opts=opts.TitleOpts(title="Map-基本示例"),
+#                 .set_global_opts(title_opts=opts.TitleOpts(title="上海配送图"),
 #                                  visualmap_opts=opts.VisualMapOpts(max_=max(sum_list), split_number=5,
 #                                                                    is_piecewise=True))
 #         )
-#         return render(request, 'Testshow.html', {'Dist': Temp, 'data': c.render_embed()})
-#     # bill_lists = Company_Branch_Delivery.objects.order_by('-goods_delivery_id')[:4]
-#     return render(request, 'Testshow.html', {'Dist': Temp})
+#         return render(request, 'Company_Branch_Delivery.html',
+#                       {'bill_lists': bill_lists, 'Dist': District_list, 'New_id': Max_id + 1,
+#                        'Edit_id': Edit_id, 'data': c.render_embed(),
+#                        'All_request': request.POST, 'bill_len': bill_lists_len})
