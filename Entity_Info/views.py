@@ -13,12 +13,6 @@ from pyecharts import options as opts
 from pyecharts.charts import Bar
 
 
-class TestForm(Form):
-    inp1 = fields.CharField(min_length=4, max_length=8)
-    inp2 = fields.EmailField()
-    inp3 = fields.IntegerField(min_value=10, max_value=100)
-
-
 def index(request):
     return render(request, 'index.html')
 
@@ -104,22 +98,181 @@ def logout(request):
     return redirect('/regist/')
 
 
-def goods_info_input(request):
-    if request.method == 'POST':
-        Id = request.POST.get("Goods_id")
-        Name = request.POST.get("Goods_name")
-        Category = request.POST.get("Goods_category")
-        Unit = request.POST.get("Goods_unit")
-        Price = request.POST.get("Goods_price")
+class Record(object):
+    good_id = 0
+    bill = 0
+    goods_info_request = 0
 
-        if Goods_Info.objects.filter(goods_id=Id):
-            msg_1 = '商品信息已存在'
-            return render(request, 'goods_input.html', locals())
+def goods_info(request):
+    Edit_id = request.GET.get("Edit_id", '')
+    Page_id = request.GET.get('page', 1)
+    if Edit_id:
+        Record.good_id = Edit_id
+    # 删除
+    Delete_id = request.GET.get("Delete_id", '')
+    if Delete_id and Goods_Info.objects.filter(goods_id=Delete_id):
+        Goods_Info.objects.get(goods_id=Delete_id).delete()
 
-        Goods_Info.objects.create(goods_id=Id, goods_name=Name, goods_category=Category, goods_unit=Unit,
-                                  goods_price=Price)
+    # 删完再查询
+    bill_lists = Goods_Info.objects.order_by('-goods_id')
 
-    return render(request, 'goods_input.html')
+    if Page_id != 1:
+        bill_lists = Record.bill
+        request.POST = Record.goods_info_request
+    else:
+        Record.goods_info_request = request.POST
+        Record.bill = bill_lists
+
+    bill_lists_len = len(bill_lists)
+    paginator = Paginator(bill_lists, 5)
+    bill_lists = paginator.page(Page_id)
+
+    # 修改
+    Edit_goods_name = request.POST.get("edit_goods_name", '')
+    Edit_goods_category = request.POST.get("edit_goods_category", '')
+    Edit_goods_unit = request.POST.get("edit_goods_unit", '')
+    Edit_goods_price = request.POST.get("edit_goods_price", '')
+
+    if Edit_goods_name:
+        Goods_Info.objects.filter(goods_id=Record.good_id).update(
+            goods_delivery_send_time=Edit_goods_name)
+    if Edit_goods_category:
+        Goods_Info.objects.filter(goods_id=Record.good_id).update(
+            goods_delivery_receive_time=Edit_goods_category)
+    if Edit_goods_unit:
+        Goods_Info.objects.filter(goods_id=Record.good_id).update(
+            goods_num=Edit_goods_unit)
+    if Edit_goods_price:
+        Goods_Info.objects.filter(goods_id=Record.good_id).update(
+            goods_price=Edit_goods_price)
+
+    # 搜索
+    Search_goods_id = request.POST.get("Search_goods_id")
+    Search_goods_name = request.POST.get("Search_goods_name")
+    Search_goods_category = request.POST.get("Search_goods_category")
+    Search_goods_unit = request.POST.get("Search_goods_unit")
+    Search_goods_price = request.POST.get("Search_goods_price")
+
+    Search_goods_price_start = '0'
+    Search_goods_price_end = '99999'
+    Find_Index = str(Search_goods_price).find('-')
+    if Search_goods_price and Find_Index == -1:  # xxx
+        Search_goods_price_start = Search_goods_price
+        Search_goods_price_end = Search_goods_price
+    elif Search_goods_price and Find_Index == 0:  # - xxx
+        Search_goods_price_end = str(Search_goods_price)[Find_Index + 1:]
+    elif Search_goods_price and Find_Index == len(str(Search_goods_price)) - 1:  # xxx -
+        Search_goods_price_start = str(Search_goods_price)[:Find_Index]
+    elif Search_goods_price:  # xxx-xxx
+        Search_goods_price_start = str(Search_goods_price)[:Find_Index]
+        Search_goods_price_end = str(Search_goods_price)[Find_Index + 1:]
+
+    Msg = {'msg_1': '', 'msg_2': '', 'msg_3': '', 'msg_4': ''}
+    if Search_goods_id and not Goods_Info.objects.filter(goods_id__contains=Search_goods_id):
+        Msg['msg_1'] = '单号无此数据'
+    if Search_goods_name and not Goods_Info.objects.filter(goods_name__contains=Search_goods_name):
+        Msg['msg_2'] = '商品名无此数据'
+    if Search_goods_category and not Goods_Info.objects.filter(goods_category__contains=Search_goods_category):
+        Msg['msg_3'] = '商品类别无此数据'
+    if Search_goods_unit and not Goods_Info.objects.filter(goods_unit__contains=Search_goods_unit):
+        Msg['msg_4'] = '商品单位无此数据'
+    if Msg['msg_1'] or Msg['msg_2'] or Msg['msg_3'] or Msg['msg_4']:
+        return render(request, 'Goods_info.html',
+                      {'bill_lists': bill_lists, 'Msg': Msg,
+                       'Edit_id': Edit_id, 'All_request': request.POST,
+                       'bill_len': bill_lists_len, 'paginator': paginator})
+
+    condition_dict = {}
+    if Search_goods_id:
+        condition_dict['goods_id__contains'] = Search_goods_id
+    if Search_goods_name:
+        condition_dict['goods_name__contains'] = Search_goods_name
+    if Search_goods_category:
+        condition_dict['goods_category__contains'] = Search_goods_category
+    if Search_goods_unit:
+        condition_dict['goods_unit__contains'] = Search_goods_unit
+    if Search_goods_price:
+        condition_dict['goods_price__range'] = [Search_goods_price_start, Search_goods_price_end]
+
+    bill_lists = Goods_Info.objects.filter(**condition_dict)
+
+    New_Goods_id = request.POST.get("New_Goods_id")
+    New_Goods_name = request.POST.get("New_Goods_name")
+    New_Goods_category = request.POST.get("New_Goods_category")
+    New_Goods_unit = request.POST.get("New_Goods_unit")
+    New_Goods_price = request.POST.get("New_Goods_price")
+
+    if New_Goods_name and New_Goods_category and New_Goods_unit and New_Goods_price:
+        Goods_Info.objects.create(goods_id=New_Goods_id, goods_name=New_Goods_name, goods_category=New_Goods_category,
+                                  goods_unit=New_Goods_unit,
+                                  goods_price=New_Goods_price)
+
+    Good_id_Sort = request.POST.get("Good_id_Sort")
+    Good_name_Sort = request.POST.get("Good_name_Sort")
+    Good_price_Sort = request.POST.get("Good_price_Sort")
+    Multistage_query = request.POST.get("Multistage_query")
+    Level_1 = request.POST.get("Level_1")
+    Level_2 = request.POST.get("Level_2")
+    Level_3 = request.POST.get("Level_3")
+    sort_list = []
+    if Multistage_query:
+        if Level_1:
+            sort_list.append(Sort_condition(Level_1))
+            if Level_2:
+                sort_list.append(Sort_condition(Level_2))
+                if Level_3:
+                    sort_list.append(Sort_condition(Level_3))
+    else:
+        if Sort_condition(Good_id_Sort):
+            sort_list.append(Sort_condition(Good_id_Sort))
+        elif Sort_condition(Good_name_Sort):
+            sort_list.append(Sort_condition(Good_name_Sort))
+        elif Sort_condition(Good_price_Sort):
+            sort_list.append(Sort_condition(Good_price_Sort))
+
+    bill_lists = bill_lists.order_by(*sort_list)
+
+    if Page_id != 1:
+        bill_lists = Record.bill
+        request.POST = Record.goods_info_request
+    else:
+        Record.goods_info_request = request.POST
+        Record.bill = bill_lists
+
+    bill_lists_len = len(bill_lists)
+    paginator = Paginator(bill_lists, 5)
+    bill_lists = paginator.page(Page_id)
+
+    # print('POST内容: ', request.POST)
+    # print('GET内容: ', request.GET)
+    return render(request, 'Goods_info.html',
+                  {'bill_lists': bill_lists, 'Edit_id': Edit_id, 'All_request': request.POST,
+                   'bill_len': bill_lists_len, 'paginator': paginator})
+
+
+def Sort_condition(mode):
+    if mode == 'good_id_incr':
+        return 'goods_id'
+    elif mode == 'good_id_desc':
+        return '-goods_id'
+    elif mode == 'good_name_incr':
+        return 'goods_name'
+    elif mode == 'good_name_desc':
+        return '-goods_name'
+    elif mode == 'good_price_incr':
+        return 'goods_price'
+    elif mode == 'good_price_desc':
+        return '-goods_price'
+    elif mode == 'good_category_incr':
+        return 'goods_category'
+    elif mode == 'good_category_desc':
+        return '-goods_category'
+    elif mode == 'good_unit_incr':
+        return 'goods_unit'
+    elif mode == 'good_unit_desc':
+        return '-goods_unit'
+    else:
+        return 0
 
 
 def supplier_info_input(request):
@@ -167,15 +320,3 @@ def storage_info_input(request):
         Storage_Info.objects.create(storage_id=Id, storage_address=Address)
 
     return render(request, 'goods_new_input.html')
-
-
-
-def test(request):
-    if request.method == 'GET':
-        obj = TestForm()
-        # return render(request, 'test.html', {'obj': obj})
-    else:
-        obj = TestForm(request.POST)
-        if obj.is_valid():
-            return HttpResponse('提交成功')
-    return render(request, 'test.html', {'obj': obj})

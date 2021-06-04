@@ -21,7 +21,7 @@ class Supplier_Goods_Info(models.Model):
     # 店内码
     SKU = models.PositiveSmallIntegerField(primary_key=True, unique=True)
     # 供应价格
-    branch_sale_price = models.DecimalField(max_digits=8, decimal_places=2)
+    order_price = models.DecimalField(max_digits=8, decimal_places=2)
 
 class Goods_Brench_Storage(models.Model):
     """商品_门店：库存联系"""

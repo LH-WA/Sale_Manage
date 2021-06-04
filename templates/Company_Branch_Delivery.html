@@ -100,6 +100,12 @@
 
                         <label style="color: red;">{{ Msg.msg_1 }}</label>
                         <div class="field">
+                            <label for="Search_Goods_delivery_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
+                                   name="Search_Goods_delivery_id" value="{{All_request.Search_Goods_delivery_id}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_2 }}</label>
+                        <div class="field">
                             <label for="Search_Staff_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
                                    name="Search_Staff_id" value="{{All_request.Search_Staff_id}}">
@@ -107,22 +113,16 @@
                         <select name="Search_Branch_id" style="font-size: 15pt; margin-top:10px" id="Search_Branch_id">
                             <option value="All">所有分店</option>
                             {% for item_1,item_2 in Dist %}
-                                <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
                             {% endfor %}
                         </select>
-                        <label style="color: red;">{{ Msg.msg_2 }}</label>
-                        <div class="field">
-                            <label for="Search_Goods_delivery_id"></label>
-                            <input style="font-size: 15pt; margin-top:0px" placeholder="单号" type="number"
-                                   name="Search_Goods_delivery_id" value="{{All_request.Search_Goods_delivery_id}}">
-                        </div>
                         <input type="date" name="Search_Time_begin" value="{{All_request.Search_Time_begin}}">
                         <input type="date" name="Search_Time_end" value="{{All_request.Search_Time_end}}">
                         <input type="submit" value="确认"
                                style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
                                class="ui button">
                         <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
-                               class="ui button" href="/company_branch_delivery/?Reset=1">Reset</a>
+                           class="ui button" href="/company_branch_delivery/?Reset=1">Reset</a>
                     </form>
 
                     <form action="/company_branch_delivery/" method="POST" class="ui form">
@@ -154,7 +154,7 @@
                         {% endfor %}
 
                         {% else %}
-                            <label style="color: red;">无查询结果</label>
+                        <label style="color: red;">无查询结果</label>
                         {% endif %}
 
                         <div class="pagenation">
@@ -202,15 +202,15 @@
                         </select>
                         <label style="color: red;">{{ Msg.msg_3 }}</label>
                         <div class="field">
-                            <label for="new_delivery_storage_id"></label>
-                            <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
-                                   name="new_delivery_storage_id" required>
-                        </div>
-                        <label style="color: red;">{{ Msg.msg_4 }}</label>
-                        <div class="field">
                             <label for="new_delivery_goods_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
                                    name="new_delivery_goods_id" required>
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_4 }}</label>
+                        <div class="field">
+                            <label for="new_delivery_storage_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
+                                   name="new_delivery_storage_id" required>
                         </div>
                         <label style="color: red;">{{ Msg.msg_5 }}</label>
                         <div class="field">
@@ -242,9 +242,10 @@
                         <div class="field">
                             <label for="edit_goods_num"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="配送数量" type="number"
-                                   name="edit_goods_num">
+                                   name="edit_goods_num" value="{{Edit_object.goods_num}}">
                         </div>
                         <select name="edit_delivery_branch_id" style="font-size: 15pt; margin-top:10px">
+                            <option value="{{Edit_object.delivery_branch_id_id}}">{{Edit_object.delivery_branch_id__branch_district}}</option>
                             <option value="{{Edit_id_branch_id}}">{{Edit_id_branch_district}}</option>
                             {% for item_1,item_2 in Dist %}
                             <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
@@ -254,17 +255,17 @@
                         <div class="field">
                             <label for="edit_delivery_storage_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="仓库号" type="number"
-                                   name="edit_delivery_storage_id">
+                                   name="edit_delivery_storage_id" value="{{Edit_object.delivery_storage_id_id}}">
                         </div>
                         <div class="field">
                             <label for="edit_delivery_goods_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
-                                   name="edit_delivery_goods_id">
+                                   name="edit_delivery_goods_id" value="{{Edit_object.delivery_goods_id_id}}">
                         </div>
                         <div class="field">
                             <label for="edit_goods_delivery_staff_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="员工号" type="number"
-                                   name="edit_goods_delivery_staff_id">
+                                   name="edit_goods_delivery_staff_id" value="{{Edit_object.goods_delivery_staff_id_id}}">
                         </div>
                         <input type="submit" value="确认修改"
                                style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
@@ -276,7 +277,7 @@
         </div>
     </div>
 </div>
-    {{data|safe}}
+{{data|safe}}
 </body>
 
 <script type="text/javascript">
@@ -398,6 +399,7 @@
         else if('{{All_request.Level_3}}' == 'staff_id_desc')
             document.getElementById("Level_3").selectedIndex = 16;
     }
+
 
 </script>
 

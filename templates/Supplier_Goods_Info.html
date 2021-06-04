@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>商品供应价格信息</title>
+</head>
+
+<body onload="Select_record()">
+<div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+    <div class="ui stackable centered column grid">
+        <div class="centered row">
+            <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                    <form action="/supplier_goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <select name="SKU_Sort" style="font-size: 15pt; margin-top:10px" id="SKU_Sort">
+                            <option value="">店内码</option>
+                            <option value="SKU_incr">升序</option>
+                            <option value="SKU_desc">降序</option>
+                        </select>
+                        <select name="order_price_Sort" style="font-size: 15pt; margin-top:10px" id="order_price_Sort">
+                            <option value="">采购价格</option>
+                            <option value="order_price_incr">升序</option>
+                            <option value="order_price_desc">降序</option>
+                        </select>
+                        <select name="Show_state" style="font-size: 15pt; margin-top:10px" id="Show_state">
+                            <option value="">不显示chart</option>
+                            <option value="1">显示</option>
+                        </select>
+
+                        <select name="Multistage_query" style="font-size: 15pt; margin-top:10px">
+                            <option value="">单项排序</option>
+                            <option value="多级排序">多级排序</option>
+                        </select>
+                        <select name="Level_1" style="font-size: 15pt; margin-top:10px" id="Level_1">
+                            <option value="">一级排序依据</option>
+                            <option value="SKU_incr">店内码(升序)</option>
+                            <option value="SKU_desc">店内码(降序)</option>
+                            <option value="order_price_incr">采购价格(升序)</option>
+                            <option value="order_price_desc">采购价格(降序)</option>
+                        </select>
+                        <select name="Level_2" style="font-size: 15pt; margin-top:10px" id="Level_2">
+                            <option value="">二级排序依据</option>
+                            <option value="SKU_incr">店内码(升序)</option>
+                            <option value="SKU_desc">店内码(降序)</option>
+                            <option value="order_price_incr">采购价格(升序)</option>
+                            <option value="order_price_desc">采购价格(降序)</option>
+                        </select>
+
+
+                        <label style="color: red;">{{ Msg.msg_1 }}</label>
+                        <div class="field">
+                            <label for="Search_SKU"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="店内码" type="number"
+                                   name="Search_SKU" value="{{All_request.Search_SKU}}">
+                        </div>
+                        <input placeholder="0-99999"
+                               type="text" name="Search_price" value="{{All_request.Search_price}}">
+                        <input type="submit" value="确认"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button" href="/supplier_goods_info/?Reset=1">Reset</a>
+                    </form>
+
+                    <form action="/supplier_goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        {% if goods_lists %}
+                        <output style="color: red;">共有{{goods_len}}条查询记录</output>
+                        {% for good in goods_lists%}
+                        <div class="field">
+                            <label></label>
+                            <output>店内码:{{good.SKU}}</output>
+                            <label></label>
+                            <output>采购价格:{{good.order_price}}</output>
+                            <a class="item" href="/supplier_goods_info/?Edit_id={{good.SKU}}">修改</a>
+                            <a class="item" href="/supplier_goods_info/?Delete_id={{good.SKU}}">删除</a>
+                        </div>
+                        {% endfor %}
+
+                        {% else %}
+                            <label style="color: red;">无查询结果</label>
+                        {% endif %}
+
+                        <div class="pagenation">
+                            {% if goods_lists.has_previous %}
+                            <a href="/supplier_goods_info/?page={{ goods_lists.previous_page_number }}">上一页</a>
+                            {% endif %}
+
+                            {% for index in paginator.page_range %}
+                            {% if index == goods_lists.number %}
+                            <a href="/supplier_goods_info/?page={{ index }}" class="active">{{ index }}</a>
+                            {% else %}
+                            <a href="/supplier_goods_info/?page={{ index }}">{{ index }}</a>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if goods_lists.has_next %}
+                            <a href="/supplier_goods_info/?page={{ goods_lists.next_page_number }}">下一页></a>
+                            {% endif %}
+                        </div>
+
+                        <h2 style="color: black;" align="center">商品供应信息录入</h2>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <label style="color: red;">{{ Msg.msg_2 }}</label>
+                        <div class="field">
+                            <label for="new_SKU"></label>
+                            <input placeholder="店内码：商品码+供应商编号" type="number" name="new_SKU" required
+                                   autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="new_order_price"></label>
+                            <input placeholder="采购价格" type="number" step="0.01"  min="0"
+                                   name="new_order_price" autocomplete="off">
+                        </div>
+                        <input type="submit" value="确认加入"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% if Edit_id %}
+                    <form action="/supplier_goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <h2 style="color: black;" align="center">商品供应信息修改</h2>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <div class="field">
+                            <label for="edit_SKU"></label>
+                            <input type="number" name="edit_SKU" value="{{Edit_object.SKU}}">
+                        </div>
+                        <div class="field">
+                            <label for="edit_order_price"></label>
+                            <input type="number" step="0.01"  min="0" name="edit_order_price" value="{{Edit_object.order_price}}">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
+                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <input type="submit" value="确认修改"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {{data|safe}}
+</body>
+
+<script type="text/javascript">
+    function Select_record() {
+        if('{{All_request.SKU_Sort}}' == 'SKU_incr')
+            document.getElementById("SKU_Sort").selectedIndex = 1;
+        else if('{{All_request.SKU_Sort}}' == 'SKU_desc')
+            document.getElementById("SKU_Sort").selectedIndex = 2;
+        if('{{All_request.order_price_Sort}}' == 'order_price_incr')
+            document.getElementById("order_price_Sort").selectedIndex = 1;
+        else if('{{All_request.order_price_Sort}}' == 'order_price_desc')
+            document.getElementById("order_price_Sort").selectedIndex = 2;
+
+        switch('{{All_request.Level_1}}'){
+            case 'SKU_incr':
+                document.getElementById("Level_1").selectedIndex = 1;
+                break;
+            case 'SKU_desc':
+                document.getElementById("Level_1").selectedIndex = 2;
+                break;
+            case 'order_price_incr':
+                document.getElementById("Level_1").selectedIndex = 3;
+                break;
+            case 'order_price_desc':
+                document.getElementById("Level_1").selectedIndex = 4;
+        }
+
+        switch('{{All_request.Level_2}}'){
+            case 'SKU_incr':
+                document.getElementById("Level_2").selectedIndex = 1;
+                break;
+            case 'SKU_desc':
+                document.getElementById("Level_2").selectedIndex = 2;
+                break;
+            case 'order_price_incr':
+                document.getElementById("Level_2").selectedIndex = 3;
+                break;
+            case 'order_price_desc':
+                document.getElementById("Level_2").selectedIndex = 4;
+        }
+    }
+
+</script>
+
+</html>

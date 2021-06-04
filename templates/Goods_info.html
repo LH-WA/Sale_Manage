@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>商品信息录入</title>
+</head>
+
+<body onload="Select_record()">
+<div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+    <div class="ui stackable centered column grid">
+        <div class="centered row">
+            <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                    <form action="/goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <select name="Good_id_Sort" style="font-size: 15pt; margin-top:10px" id="Good_id_Sort">
+                            <option value="">商品编号</option>
+                            <option value="good_id_incr">升序</option>
+                            <option value="good_id_desc">降序</option>
+                        </select>
+                        <select name="Good_name_Sort" style="font-size: 15pt; margin-top:10px" id="Good_name_Sort">
+                            <option value="">商品名称</option>
+                            <option value="good_name_incr">升序</option>
+                            <option value="good_name_desc">降序</option>
+                        </select>
+                        <select name="Good_price_Sort" style="font-size: 15pt; margin-top:10px" id="Good_price_Sort">
+                            <option value="">商品价格</option>
+                            <option value="good_price_incr">升序</option>
+                            <option value="good_price_desc">降序</option>
+                        </select>
+
+                        <select name="Multistage_query" style="font-size: 15pt; margin-top:10px">
+                            <option value="">单项排序</option>
+                            <option value="多级排序">多级排序</option>
+                        </select>
+                        <select name="Level_1" style="font-size: 15pt; margin-top:10px" id="Level_1">
+                            <option value="">一级排序依据</option>
+                            <option value="good_id_incr">商品编号(顺序)</option>
+                            <option value="good_id_desc">商品编号(逆序)</option>
+                            <option value="good_category_incr">商品类别(顺序)</option>
+                            <option value="good_category_desc">商品类别(逆序)</option>
+                            <option value="good_price_incr">商品价格(顺序)</option>
+                            <option value="good_price_desc">商品价格(逆序)</option>
+                            <option value="good_unit_incr">商品单位(顺序)</option>
+                            <option value="good_unit_desc">商品单位(逆序)</option>
+                            <option value="good_name_incr">商品名称(顺序)</option>
+                            <option value="good_name_desc">商品名称(逆序)</option>
+                        </select>
+                        <select name="Level_2" style="font-size: 15pt; margin-top:10px" id="Level_2">
+                            <option value="">二级排序依据</option>
+                            <option value="good_id_incr">商品编号(顺序)</option>
+                            <option value="good_id_desc">商品编号(逆序)</option>
+                            <option value="good_category_incr">商品类别(顺序)</option>
+                            <option value="good_category_desc">商品类别(逆序)</option>
+                            <option value="good_price_incr">商品价格(顺序)</option>
+                            <option value="good_price_desc">商品价格(逆序)</option>
+                            <option value="good_unit_incr">商品单位(顺序)</option>
+                            <option value="good_unit_desc">商品单位(逆序)</option>
+                            <option value="good_name_incr">商品名称(顺序)</option>
+                            <option value="good_name_desc">商品名称(逆序)</option>
+                        </select>
+                        <select name="Level_3" style="font-size: 15pt; margin-top:10px" id="Level_3">
+                            <option value="">三级排序依据</option>
+                            <option value="good_id_incr">商品编号(顺序)</option>
+                            <option value="good_id_desc">商品编号(逆序)</option>
+                            <option value="good_category_incr">商品类别(顺序)</option>
+                            <option value="good_category_desc">商品类别(逆序)</option>
+                            <option value="good_price_incr">商品价格(顺序)</option>
+                            <option value="good_price_desc">商品价格(逆序)</option>
+                            <option value="good_unit_incr">商品单位(顺序)</option>
+                            <option value="good_unit_desc">商品单位(逆序)</option>
+                            <option value="good_name_incr">商品名称(顺序)</option>
+                            <option value="good_name_desc">商品名称(逆序)</option>
+                        </select>
+
+                        <label style="color: red;">{{ Msg.msg_1 }}</label>
+                        <div class="field">
+                            <label for="Search_goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品编号" type="number"
+                                   name="Search_goods_id" value="{{All_request.Search_goods_id}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_2 }}</label>
+                        <div class="field">
+                            <label for="Search_goods_name"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品名称" type="text"
+                                   name="Search_goods_name" value="{{All_request.Search_goods_name}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_3 }}</label>
+                        <div class="field">
+                            <label for="Search_goods_category"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品类别" type="text"
+                                   name="Search_goods_category" value="{{All_request.Search_goods_category}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_4 }}</label>
+                        <div class="field">
+                            <label for="Search_goods_unit"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品单位" type="text"
+                                   name="Search_goods_unit" value="{{All_request.Search_goods_unit}}">
+                        </div>
+                        <div class="field">
+                            <label for="Search_goods_price"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品价格" type="text"
+                                   name="Search_goods_price" value="{{All_request.Search_goods_price}}">
+                        </div>
+                        <input type="submit" value="确认"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                           class="ui button" href="/goods_info/?Reset=1">Reset</a>
+                    </form>
+
+                    <form action="/goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        {% if bill_lists %}
+                        <output style="color: red;">共有{{bill_len}}条查询记录</output>
+                        {% for bill in bill_lists%}
+                        <div class="field">
+                            <label></label>
+                            <output>商品编号:{{bill.goods_id}}</output>
+                            <label></label>
+                            <output>商品名称:{{bill.goods_name}}</output>
+                            <label></label>
+                            <output>商品类别:{{bill.goods_category}}</output>
+                            <label></label>
+                            <output>商品单位:{{bill.goods_unit}}</output>
+                            <label></label>
+                            <output>商品价格:{{bill.goods_price}}</output>
+                            <label></label>
+                            <a class="item" href="/goods_info/?Edit_id={{bill.goods_id}}">修改</a>
+                            <a class="item" href="/goods_info/?Delete_id={{bill.goods_id}}">删除</a>
+                        </div>
+                        {% endfor %}
+
+                        {% else %}
+                        <label style="color: red;">无查询结果</label>
+                        {% endif %}
+
+                        <div class="pagenation">
+                            {% if bill_lists.has_previous %}
+                            <a href="/goods_info/?page={{ bill_lists.previous_page_number }}">上一页</a>
+                            {% endif %}
+
+                            {% for index in paginator.page_range %}
+                            {% if index == bill_lists.number %}
+                            <a href="/goods_info/?page={{ index }}" class="active">{{ index }}</a>
+                            {% else %}
+                            <a href="/goods_info/?page={{ index }}">{{ index }}</a>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if bill_lists.has_next %}
+                            <a href="/goods_info/?page={{ bill_lists.next_page_number }}">下一页></a>
+                            {% endif %}
+                        </div>
+
+                        <h2 style="color: black;" align="center">商品信息录入</h2>
+                        <label style="color: red;">{{ msg_1 }}</label>
+                        <div class="field">
+                            <label for="New_Goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品编号" type="number"
+                                   name="New_Goods_id" required autocomplete="off">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <div class="field">
+                            <label for="New_Goods_name"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品名称" type="text"
+                                   name="New_Goods_name" required autocomplete="off">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
+                        <div class="field">
+                            <label for="New_Goods_category"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品类别" type="text"
+                                   name="New_Goods_category" required autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="New_Goods_unit"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品单位" type="text"
+                                   name="New_Goods_unit" required>
+                        </div>
+                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <div class="field">
+                            <label for="New_Goods_price"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品价格" type="number"
+                                   name="New_Goods_price" required>
+                        </div>
+                        <input type="submit" value="确认加入"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% if Edit_id %}
+                    <form action="/goods_info/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <h2 style="color: black;" align="center">商品信息修改</h2>
+                        <div class="field">
+                            <output>修改商品单号:{{Edit_id}}</output>
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
+                        <div class="field">
+                            <label for="edit_goods_name"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品名称" type="number"
+                                   name="edit_goods_name">
+                        </div>
+                        <div class="field">
+                            <label for="edit_goods_category"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品类别" type="number"
+                                   name="edit_goods_category">
+                        </div>
+                        <!--                    <label style="color: red;" >{{ msg_3 }}</label>-->
+                        <div class="field">
+                            <label for="edit_goods_unit"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品单位" type="number"
+                                   name="edit_goods_unit">
+                        </div>
+                        <!--                      <label style="color: red;">{{ msg_4 }}</label>-->
+                        <div class="field">
+                            <label for="edit_goods_price"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品价格" type="number"
+                                   name="edit_goods_price">
+                        </div>
+                        <input type="submit" value="确认修改"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+    function Select_record() {
+        alert('ok')
+        if('{{All_request.Good_id_Sort}}' == 'good_id_incr')
+            document.getElementById("Good_id_Sort").selectedIndex = 1;
+        else if('{{All_request.Good_id_Sort}}' == 'good_id_desc')
+            document.getElementById("Good_id_Sort").selectedIndex = 2;
+        else if('{{All_request.Good_name_Sort}}' == 'good_name_incr')
+            document.getElementById("Good_name_Sort").selectedIndex = 1;
+        else if('{{All_request.Good_name_Sort}}' == 'good_name_desc')
+            document.getElementById("Good_name_Sort").selectedIndex = 2;
+        else if('{{All_request.Good_price_Sort}}' == 'good_price_incr')
+            document.getElementById("Good_price_Sort").selectedIndex = 1;
+        else if('{{All_request.Good_price_Sort}}' == 'good_price_desc')
+            document.getElementById("Good_price_Sort").selectedIndex = 2;
+
+        if('{{All_request.Level_1}}' == 'good_id_incr')
+            document.getElementById("Level_1").selectedIndex = 1;
+        else if('{{All_request.Level_1}}' == 'good_id_desc')
+            document.getElementById("Level_1").selectedIndex = 2;
+        else if('{{All_request.Level_1}}' == 'good_category_incr')
+            document.getElementById("Level_1").selectedIndex = 3;
+        else if('{{All_request.Level_1}}' == 'good_category_desc')
+            document.getElementById("Level_1").selectedIndex = 4;
+        else if('{{All_request.Level_1}}' == 'good_price_incr')
+            document.getElementById("Level_1").selectedIndex = 5;
+        else if('{{All_request.Level_1}}' == 'good_price_desc')
+            document.getElementById("Level_1").selectedIndex = 6;
+        else if('{{All_request.Level_1}}' == 'good_unit_incr')
+            document.getElementById("Level_1").selectedIndex = 7;
+        else if('{{All_request.Level_1}}' == 'good_unit_desc')
+            document.getElementById("Level_1").selectedIndex = 8;
+        else if('{{All_request.Level_1}}' == 'good_name_incr')
+            document.getElementById("Level_1").selectedIndex = 9;
+        else if('{{All_request.Level_1}}' == 'good_name_desc')
+            document.getElementById("Level_1").selectedIndex = 10;
+
+        if('{{All_request.Level_2}}' == 'good_id_incr')
+            document.getElementById("Level_2").selectedIndex = 1;
+        else if('{{All_request.Level_2}}' == 'good_id_desc')
+            document.getElementById("Level_2").selectedIndex = 2;
+        else if('{{All_request.Level_2}}' == 'good_category_incr')
+            document.getElementById("Level_2").selectedIndex = 3;
+        else if('{{All_request.Level_2}}' == 'good_category_desc')
+            document.getElementById("Level_2").selectedIndex = 4;
+        else if('{{All_request.Level_2}}' == 'good_price_incr')
+            document.getElementById("Level_2").selectedIndex = 5;
+        else if('{{All_request.Level_2}}' == 'good_price_desc')
+            document.getElementById("Level_2").selectedIndex = 6;
+        else if('{{All_request.Level_2}}' == 'good_unit_incr')
+            document.getElementById("Level_2").selectedIndex = 7;
+        else if('{{All_request.Level_2}}' == 'good_unit_desc')
+            document.getElementById("Level_2").selectedIndex = 8;
+        else if('{{All_request.Level_2}}' == 'good_name_incr')
+            document.getElementById("Level_2").selectedIndex = 9;
+        else if('{{All_request.Level_2}}' == 'good_name_desc')
+            document.getElementById("Level_2").selectedIndex = 10;
+
+        if('{{All_request.Level_3}}' == 'good_id_incr')
+            document.getElementById("Level_3").selectedIndex = 1;
+        else if('{{All_request.Level_3}}' == 'good_id_desc')
+            document.getElementById("Level_3").selectedIndex = 2;
+        else if('{{All_request.Level_3}}' == 'good_category_incr')
+            document.getElementById("Level_3").selectedIndex = 3;
+        else if('{{All_request.Level_3}}' == 'good_category_desc')
+            document.getElementById("Level_3").selectedIndex = 4;
+        else if('{{All_request.Level_3}}' == 'good_price_incr')
+            document.getElementById("Level_3").selectedIndex = 5;
+        else if('{{All_request.Level_3}}' == 'good_price_desc')
+            document.getElementById("Level_3").selectedIndex = 6;
+        else if('{{All_request.Level_3}}' == 'good_unit_incr')
+            document.getElementById("Level_3").selectedIndex = 7;
+        else if('{{All_request.Level_3}}' == 'good_unit_desc')
+            document.getElementById("Level_3").selectedIndex = 8;
+        else if('{{All_request.Level_3}}' == 'good_name_incr')
+            document.getElementById("Level_3").selectedIndex = 9;
+        else if('{{All_request.Level_3}}' == 'good_name_desc')
+            document.getElementById("Level_3").selectedIndex = 10;
+    }
+
+
+
+</script>
+
+</html>
