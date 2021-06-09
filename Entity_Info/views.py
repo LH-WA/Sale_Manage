@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, HttpResponse
-from django.forms import Form, fields, widgets
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+import cv2
+import pyzbar.pyzbar as pyzbar
+from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
 # Create your views here.
 
-from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
 
 # from django.db import connection
 # from django.http import HttpResponse
@@ -14,21 +16,21 @@ from pyecharts.charts import Bar
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'username': request.session['username']})
 
 
 def logins(request):
     if request.method == 'POST':
-        username = request.POST.get("username")
+        account = request.POST.get("account")
         password = request.POST.get("password")
-        if not User_Info.objects.filter(user_account=username):
-            return render(request, 'login.html', {'msg_1': '账号不存在！', 'username': username, 'password': password})
-        if not User_Info.objects.filter(user_account=username, user_psw=password):
-            return render(request, 'login.html', {'msg_2': '密码错误！', 'username': username, 'password': password})
-        request.session['is_login'] = True
-        request.session['username'] = username
-        request.session['password'] = password
-        return render(request, 'index.html', {'username': username})
+        if not User_Info.objects.filter(user_account=account):
+            return render(request, 'login.html', {'msg_1': '账号不存在！', 'username': account, 'password': password})
+        if not User_Info.objects.filter(user_account=account, user_psw=password):
+            return render(request, 'login.html', {'msg_2': '密码错误！', 'username': account, 'password': password})
+
+        request.session['username'] = User_Info.objects.get(user_account=account).user_name
+        # request.session['password'] = password
+        return redirect('/index/')
     return render(request, 'login.html')
 
 
@@ -91,11 +93,10 @@ def regist(request):
 
 
 def logout(request):
-    if not request.session.get('is_login', None):
-        return redirect('/login/')
-
-    request.session.flush()
-    return redirect('/regist/')
+    # request.session.flush()
+    request.session['username'] = ''
+    # request.session['password'] = ''
+    return redirect('/login/')
 
 
 class Record(object):
@@ -103,9 +104,16 @@ class Record(object):
     bill = 0
     goods_info_request = 0
 
+
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
+
 def goods_info(request):
     Edit_id = request.GET.get("Edit_id", '')
     Page_id = request.GET.get('page', 1)
+    Scan = request.GET.get('Scan')
+
     if Edit_id:
         Record.good_id = Edit_id
     # 删除
@@ -116,9 +124,9 @@ def goods_info(request):
     # 删完再查询
     bill_lists = Goods_Info.objects.order_by('-goods_id')
 
-    if Page_id != 1:
-        bill_lists = Record.bill
+    if Page_id != 1 or Scan:
         request.POST = Record.goods_info_request
+        bill_lists = Record.bill
     else:
         Record.goods_info_request = request.POST
         Record.bill = bill_lists
@@ -232,9 +240,9 @@ def goods_info(request):
 
     bill_lists = bill_lists.order_by(*sort_list)
 
-    if Page_id != 1:
-        bill_lists = Record.bill
+    if Page_id != 1 or Scan:
         request.POST = Record.goods_info_request
+        bill_lists = Record.bill
     else:
         Record.goods_info_request = request.POST
         Record.bill = bill_lists
@@ -243,11 +251,54 @@ def goods_info(request):
     paginator = Paginator(bill_lists, 5)
     bill_lists = paginator.page(Page_id)
 
+    barcodeData = ''
+    if Scan:
+        barcodeData = Scan_BarCode()
+
     # print('POST内容: ', request.POST)
     # print('GET内容: ', request.GET)
     return render(request, 'Goods_info.html',
                   {'bill_lists': bill_lists, 'Edit_id': Edit_id, 'All_request': request.POST,
-                   'bill_len': bill_lists_len, 'paginator': paginator})
+                   'bill_len': bill_lists_len, 'paginator': paginator, 'barcodeData': barcodeData})
+
+
+def Scan_BarCode():
+    x_r = 0
+    y_r = 0
+    w_r = 0
+    h_r = 0
+    count_num = 0
+    barcodeData_r = 0
+    while (True):
+        ret, frame = cap.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        barcodes = pyzbar.decode(gray)
+
+        for barcode in barcodes:
+            barcodeData = barcode.data.decode("utf-8")
+            (x, y, w, h) = barcode.rect
+            if ((x + w / 2) - (x_r + w_r / 2)) ** 2 + ((y + h / 2) - (y_r + h_r / 2)) ** 2 < 5:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                text = "{}".format(barcodeData)
+                cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 125), 2)
+            x_r = x
+            y_r = y
+            w_r = w
+            h_r = h
+
+            if barcodeData_r == barcodeData:
+                count_num = count_num + 1
+            else:
+                count_num = 0
+            barcodeData_r = barcodeData
+
+        cv2.imshow('frame', frame)
+        cv2.waitKey(1)
+        if count_num > 3:
+            break
+
+    cv2.destroyAllWindows()
+    return barcodeData_r
 
 
 def Sort_condition(mode):

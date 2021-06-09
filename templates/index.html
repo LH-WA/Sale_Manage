@@ -8,31 +8,51 @@
     <title>主页面</title>
 </head>
 
-<body style="background-color: rgb(205, 205, 205);">
-    {% if not username %}
-        <div style="margin-top: 15px; margin-left: 25%;  margin-right: 25%; padding-top: 15%; " align="center">
-            <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.4);" class="ui segment">
-                <h3 style="color: red;" align="center">请先登录！</h3>
-                <a href="/login/" type="submit" id="submit" style="width:30%; background-color: #FF8D00; font-size: 16pt; margin-top: 5%" class="ui button" >确定</a>
-            </div>
-        </div>
-        {% else %}
-             <div style="min-height: 70px;" class="ui inverted fixed stackable red large menu">
-                <a class="item" href="/">销售管理系统</a>
-                <div class="right menu">
-                  <a class="item" >
-                      {% if now < midday %}
-                        早上好！
-                      {% else %}
-                        下午好！
-                      {% endif %}
-                      {{ username }}</a>
-                  <a class="item" href="/logout/">登出</a>
-                </div>
-             </div>
-        {% endif %}
+<body style="background-color: rgb(205, 205, 205);" onload="Time()">
+{% if not username %}
+<div style="margin-top: 15px; margin-left: 25%;  margin-right: 25%; padding-top: 15%; " align="center">
+    <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.4);" class="ui segment">
+        <h3 style="color: red;" align="center">请先登录！</h3>
+        <a href="/login/" type="submit" id="submit"
+           style="width:30%; background-color: #FF8D00; font-size: 16pt; margin-top: 5%" class="ui button">确定</a>
+    </div>
+</div>
+{% else %}
+<div style="min-height: 70px;" class="ui inverted fixed stackable red large menu">
+    <a class="item" href="/">销售管理系统</a>
+    <div class="right menu">
+        <script>
+		    Time();
+        </script>
+        <a class="item" id="Hello"></a>
+        <a class="item">{{ username }}</a>
+        <a class="item" href="/logout/">登出</a>
+    </div>
+</div>
+{% endif %}
+<script>
+    function Time(){
+        var date=new Date();
+        var hour=date.getHours();
+        var str='';
+        if(hour<5){
+            str='凌晨好！';
+        }else if(hour<8){
+            str='早上好！';
+        }else if(hour<11){
+            str='上午好！';
+        }else if(hour<13){
+            str='中午好！';
+        }else if(hour<18){
+            str='下午好！';
+        }else if(hour<24){
+            str='晚上好！';
+        }
+        document.getElementById('Hello').innerHTML = str;
+	}
 
-   
+</script>
+
 </body>
 
 </html>

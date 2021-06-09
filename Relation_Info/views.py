@@ -313,7 +313,6 @@ def supplier_goods_info(request):
     if request.GET.get('Reset'):
         return render(request, 'Supplier_Goods_Info.html',
                       {'goods_lists': goods_lists, 'goods_len': goods_len, 'paginator': paginator})
-    # if request.method == 'POST':
 
     # 修改
     Edit_SKU = request.POST.get("edit_SKU", '')

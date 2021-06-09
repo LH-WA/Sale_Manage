@@ -161,8 +161,10 @@
                         <div class="field">
                             <label for="New_Goods_id"></label>
                             <input style="font-size: 15pt; margin-top:0px" placeholder="商品编号" type="number"
-                                   name="New_Goods_id" required autocomplete="off">
+                                   name="New_Goods_id" required autocomplete="off" value="{{ barcodeData }}">
                         </div>
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                           class="ui button" href="/goods_info/?Scan=1">扫描单号</a>
                         <!--                    <label style="color: red;" >{{ msg_2 }}</label>-->
                         <div class="field">
                             <label for="New_Goods_name"></label>
@@ -234,7 +236,6 @@
 
 <script type="text/javascript">
     function Select_record() {
-        alert('ok')
         if('{{All_request.Good_id_Sort}}' == 'good_id_incr')
             document.getElementById("Good_id_Sort").selectedIndex = 1;
         else if('{{All_request.Good_id_Sort}}' == 'good_id_desc')
@@ -311,6 +312,7 @@
         else if('{{All_request.Level_3}}' == 'good_name_desc')
             document.getElementById("Level_3").selectedIndex = 10;
     }
+
 
 
 
