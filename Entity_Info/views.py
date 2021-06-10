@@ -6,7 +6,6 @@ import pyzbar.pyzbar as pyzbar
 from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info, Storage_Info
 # Create your views here.
 
-
 # from django.db import connection
 # from django.http import HttpResponse
 # from django.template import loader
@@ -40,25 +39,12 @@ def regist(request):
     Account = max([item['user_account'] for item in Account_list]) + 1
 
     if request.method == 'POST':
-        # Account = request.POST.get("Account")
         Name = request.POST.get("Name")
         Tel = request.POST.get("Tel")
         Password = request.POST.get("Password")
         Password_r = request.POST.get("Password_r")
         Branch = request.POST.get("Branch")
         Department = request.POST.get("Department")
-        # if len(Account) != 8:
-        #     msg_1 = '账号长度应为8位'
-        #     return render(request, 'regist.html', {'Dist': Temp})
-        # elif Account.isdigit() == False :
-        #     msg_1 = '账号应只含数字'
-        #     return render(request, 'regist.html', {'Dist': Temp})
-        # elif Account.count(' ') != 0:
-        #     msg_1 = '账号应不含空格'
-        #     return render(request, 'regist.html', {'Dist': Temp})
-        # elif User_Info.objects.filter(user_account=Account):
-        #     msg_1 = '账号重复'
-        #     return render(request, 'regist.html', {'Dist': Temp})
 
         if len(Name) >= 8:
             msg_2 = '员工名字大于8位'
