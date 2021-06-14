@@ -241,7 +241,7 @@ def company_branch_delivery(request):
                   {'bill_lists': bill_lists, 'Dist': District_list, 'New_id': Max_id + 1,
                    'Edit_id': Edit_id, 'All_request': request.POST, 'bill_len': bill_lists_len,
                    'Edit_id_branch_id': Edit_id_branch_id, 'Edit_id_branch_district': Edit_id_branch_district,
-                   'Edit_object': Edit_object,  'data': Show_data, 'paginator': paginator})
+                   'Edit_object': Edit_object, 'data': Show_data, 'paginator': paginator})
 
 
 def Sort_condition(mode):
@@ -288,31 +288,6 @@ def Sort_condition(mode):
     else:
         return 0
 
-
-# def company_branch_delivery_show(request):
-#     if request.POST.get('Show_state'):
-#         District_name = [item[1] for item in District_list]
-#         District_num = len(District_name)
-#         sum_list = [0] * District_num
-#         for item in bill_lists:
-#             for i in range(1, District_num + 1):
-#                 if item.delivery_branch_id_id == i:
-#                     sum_list[i - 1] = sum_list[i - 1] + item.goods_num
-#
-#         District_value = [(District_name[i], sum_list[i]) for i in range(0, District_num)]
-#         c = (
-#             Map()
-#                 .add("", District_value, "上海",
-#                      is_map_symbol_show=False, )
-#                 .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
-#                 .set_global_opts(title_opts=opts.TitleOpts(title="上海配送图"),
-#                                  visualmap_opts=opts.VisualMapOpts(max_=max(sum_list), split_number=5,
-#                                                                    is_piecewise=True))
-#         )
-#         return render(request, 'Company_Branch_Delivery.html',
-#                       {'bill_lists': bill_lists, 'Dist': District_list, 'New_id': Max_id + 1,
-#                        'Edit_id': Edit_id, 'data': c.render_embed(),
-#                        'All_request': request.POST, 'bill_len': bill_lists_len})
 
 def supplier_goods_info(request):
     Edit_id = request.GET.get("Edit_id", '')
