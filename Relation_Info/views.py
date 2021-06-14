@@ -83,9 +83,9 @@ def company_branch_delivery(request):
         Company_Branch_Delivery.objects.filter(goods_delivery_id=Record.delivery_id).update(
             goods_delivery_staff_id_id=Edit_goods_delivery_staff_id)
 
+    Edit_object = ''
     Edit_id_branch_id = ''
     Edit_id_branch_district = ''
-    Edit_object = ''
     if Edit_id and Company_Branch_Delivery.objects.filter(goods_delivery_id=Edit_id):
         Edit_id_branch_id = Branch_Info.objects.get(
             branch_id=Company_Branch_Delivery.objects.get(goods_delivery_id=Edit_id).delivery_branch_id_id)
@@ -112,10 +112,15 @@ def company_branch_delivery(request):
                        'bill_len': bill_lists_len, 'paginator': paginator})
 
     condition_dict = {}
+    show_str_1 = str(Search_Time_begin)
+    show_str_2 = str(Search_Time_end)
     if not Search_Time_begin:
         Search_Time_begin = date(2000, 1, 1)
+        show_str_1 = '开业'
     if not Search_Time_end:
         Search_Time_end = date(2029, 12, 31)
+        show_str_2 = '今'
+
     if Search_Branch_id != 'All':
         condition_dict['delivery_branch_id__branch_id'] = Search_Branch_id
     if Search_Staff_id:
@@ -199,6 +204,27 @@ def company_branch_delivery(request):
             sort_list.append(Sort_condition(Staff_id_Sort))
     bill_lists = bill_lists.order_by(*sort_list)
 
+    Show_data = ''
+    if request.POST.get('Show_state'):
+        District_name = [item[1] for item in District_list]
+        District_num = len(District_name)
+        sum_list = [0] * District_num
+        for item in bill_lists:
+            for i in range(1, District_num + 1):
+                if item.delivery_branch_id_id == i:
+                    sum_list[i - 1] = sum_list[i - 1] + item.goods_num
+
+        District_value = [(District_name[i], sum_list[i]) for i in range(0, District_num)]
+        c = (
+            Map(opts.InitOpts(width='1500px', height='750px'))
+                .add(show_str_1 + ' 至 ' + show_str_2, District_value, "上海",
+                     is_map_symbol_show=False, is_roam=False)
+                .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(title_opts=opts.TitleOpts(title="上海配送图", pos_left='center'),
+                                 visualmap_opts=opts.VisualMapOpts(pos_right=20))
+        )
+        Show_data = c.render_embed()
+
     # print('POST内容: ', request.POST)
     if Page_id != 1:
         bill_lists = Record.bill
@@ -215,7 +241,7 @@ def company_branch_delivery(request):
                   {'bill_lists': bill_lists, 'Dist': District_list, 'New_id': Max_id + 1,
                    'Edit_id': Edit_id, 'All_request': request.POST, 'bill_len': bill_lists_len,
                    'Edit_id_branch_id': Edit_id_branch_id, 'Edit_id_branch_district': Edit_id_branch_district,
-                   'Edit_object': Edit_object, 'paginator': paginator})
+                   'Edit_object': Edit_object,  'data': Show_data, 'paginator': paginator})
 
 
 def Sort_condition(mode):

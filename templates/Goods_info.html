@@ -144,11 +144,11 @@
                             {% endif %}
 
                             {% for index in paginator.page_range %}
-                            {% if index == bill_lists.number %}
-                            <a href="/goods_info/?page={{ index }}" class="active">{{ index }}</a>
-                            {% else %}
-                            <a href="/goods_info/?page={{ index }}">{{ index }}</a>
-                            {% endif %}
+                                {% if index == bill_lists.number %}
+                                <a href="/goods_info/?page={{ index }}" class="active">{{ index }}</a>
+                                {% else %}
+                                <a href="/goods_info/?page={{ index }}">{{ index }}</a>
+                                {% endif %}
                             {% endfor %}
 
                             {% if bill_lists.has_next %}
