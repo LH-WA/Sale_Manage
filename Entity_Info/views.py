@@ -13,6 +13,48 @@ from Entity_Info.models import User_Info, Goods_Info, Supplier_Info, Branch_Info
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
+
+def Scan_BarCode():
+    x_r = 0
+    y_r = 0
+    w_r = 0
+    h_r = 0
+    count_num = 0
+    barcodeData_r = 0
+    while (True):
+        ret, frame = cap.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        barcodes = pyzbar.decode(gray)
+
+        for barcode in barcodes:
+            barcodeData = barcode.data.decode("utf-8")
+            (x, y, w, h) = barcode.rect
+            if ((x + w / 2) - (x_r + w_r / 2)) ** 2 + ((y + h / 2) - (y_r + h_r / 2)) ** 2 < 5:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                text = "{}".format(barcodeData)
+                cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 125), 2)
+            x_r = x
+            y_r = y
+            w_r = w
+            h_r = h
+
+            if barcodeData_r == barcodeData:
+                count_num = count_num + 1
+            else:
+                count_num = 0
+            barcodeData_r = barcodeData
+
+        cv2.imshow('frame', frame)
+        cv2.waitKey(1)
+        if count_num > 3:
+            break
+
+    cv2.destroyAllWindows()
+    return barcodeData_r
+
 
 def index(request):
     return render(request, 'index.html', {'username': request.session['username']})
@@ -28,7 +70,7 @@ def logins(request):
             return render(request, 'login.html', {'msg_2': '密码错误！', 'username': account, 'password': password})
 
         request.session['username'] = User_Info.objects.get(user_account=account).user_name
-        # request.session['password'] = password
+        request.session['branch'] = User_Info.objects.get(user_account=account).user_branch_id
         return redirect('/index/')
     return render(request, 'login.html')
 
@@ -81,6 +123,7 @@ def regist(request):
 def logout(request):
     # request.session.flush()
     request.session['username'] = ''
+    request.session['branch_district'] = ''
     # request.session['password'] = ''
     return redirect('/login/')
 
@@ -89,10 +132,6 @@ class Record(object):
     good_id = 0
     bill = 0
     goods_info_request = 0
-
-
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FPS, 30)
 
 
 def goods_info(request):
@@ -248,43 +287,43 @@ def goods_info(request):
                    'bill_len': bill_lists_len, 'paginator': paginator, 'barcodeData': barcodeData})
 
 
-def Scan_BarCode():
-    x_r = 0
-    y_r = 0
-    w_r = 0
-    h_r = 0
-    count_num = 0
-    barcodeData_r = 0
-    while (True):
-        ret, frame = cap.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        barcodes = pyzbar.decode(gray)
-
-        for barcode in barcodes:
-            barcodeData = barcode.data.decode("utf-8")
-            (x, y, w, h) = barcode.rect
-            if ((x + w / 2) - (x_r + w_r / 2)) ** 2 + ((y + h / 2) - (y_r + h_r / 2)) ** 2 < 5:
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                text = "{}".format(barcodeData)
-                cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 125), 2)
-            x_r = x
-            y_r = y
-            w_r = w
-            h_r = h
-
-            if barcodeData_r == barcodeData:
-                count_num = count_num + 1
-            else:
-                count_num = 0
-            barcodeData_r = barcodeData
-
-        cv2.imshow('frame', frame)
-        cv2.waitKey(1)
-        if count_num > 3:
-            break
-
-    cv2.destroyAllWindows()
-    return barcodeData_r
+# def Scan_BarCode():
+#     x_r = 0
+#     y_r = 0
+#     w_r = 0
+#     h_r = 0
+#     count_num = 0
+#     barcodeData_r = 0
+#     while (True):
+#         ret, frame = cap.read()
+#         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#         barcodes = pyzbar.decode(gray)
+#
+#         for barcode in barcodes:
+#             barcodeData = barcode.data.decode("utf-8")
+#             (x, y, w, h) = barcode.rect
+#             if ((x + w / 2) - (x_r + w_r / 2)) ** 2 + ((y + h / 2) - (y_r + h_r / 2)) ** 2 < 5:
+#                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+#                 text = "{}".format(barcodeData)
+#                 cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 125), 2)
+#             x_r = x
+#             y_r = y
+#             w_r = w
+#             h_r = h
+#
+#             if barcodeData_r == barcodeData:
+#                 count_num = count_num + 1
+#             else:
+#                 count_num = 0
+#             barcodeData_r = barcodeData
+#
+#         cv2.imshow('frame', frame)
+#         cv2.waitKey(1)
+#         if count_num > 3:
+#             break
+#
+#     cv2.destroyAllWindows()
+#     return barcodeData_r
 
 
 def Sort_condition(mode):

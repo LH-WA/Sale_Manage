@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <title>销售信息录入</title>
+</head>
+
+<body onload="Select_record()">
+<div style="width: 80%; margin: 0 auto; padding-top: 10em; margin-left: 35%">
+    <div class="ui stackable centered column grid">
+        <div class="centered row">
+            <div class="six wide column">
+                <div style="padding-bottom: 2em; background-color: rgba(245, 245, 245,0.5);" class="ui segment">
+                    <form action="/branch_client_sale/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <select name="Show_state" style="font-size: 15pt; margin-top:10px" id="Show_state">
+                            <option value="">不显示chart</option>
+                            <option value="1">显示</option>
+                        </select>
+                        <select name="Level_1" style="font-size: 15pt; margin-top:10px" id="Level_1">
+                            <option value="">一级排序依据</option>
+                            <option value="branch_sale_id_desc">销售单号(逆序)</option>
+                            <option value="branch_sale_id_incr">销售单号(顺序)</option>
+                            <option value="branch_sale_num_desc">数量(逆序)</option>
+                            <option value="branch_sale_num_incr">数量(顺序)</option>
+                            <option value="branch_sale_price_desc">价格(逆序)</option>
+                            <option value="branch_sale_price_incr">价格(顺序)</option>
+                            <option value="branch_sale_time_desc">时间(逆序)</option>
+                            <option value="branch_sale_time_incr">时间(顺序)</option>
+                            <option value="sale_branch_id_desc">门店号(逆序)</option>
+                            <option value="sale_branch_id_incr">门店号(顺序)</option>
+                            <option value="sale_goods_id_desc">商品号(逆序)</option>
+                            <option value="sale_goods_id_incr">商品号(顺序)</option>
+                        </select>
+                        <select name="Level_2" style="font-size: 15pt; margin-top:10px" id="Level_2">
+                            <option value="">二级排序依据</option>
+                            <option value="branch_sale_id_desc">销售单号(逆序)</option>
+                            <option value="branch_sale_id_incr">销售单号(顺序)</option>
+                            <option value="branch_sale_num_desc">数量(逆序)</option>
+                            <option value="branch_sale_num_incr">数量(顺序)</option>
+                            <option value="branch_sale_price_desc">价格(逆序)</option>
+                            <option value="branch_sale_price_incr">价格(顺序)</option>
+                            <option value="branch_sale_time_desc">时间(逆序)</option>
+                            <option value="branch_sale_time_incr">时间(顺序)</option>
+                            <option value="sale_branch_id_desc">门店号(逆序)</option>
+                            <option value="sale_branch_id_incr">门店号(顺序)</option>
+                            <option value="sale_goods_id_desc">商品号(逆序)</option>
+                            <option value="sale_goods_id_incr">商品号(顺序)</option>
+                        </select>
+                        <select name="Level_3" style="font-size: 15pt; margin-top:10px" id="Level_3">
+                            <option value="">三级排序依据</option>
+                            <option value="branch_sale_id_desc">销售单号(逆序)</option>
+                            <option value="branch_sale_id_incr">销售单号(顺序)</option>
+                            <option value="branch_sale_num_desc">数量(逆序)</option>
+                            <option value="branch_sale_num_incr">数量(顺序)</option>
+                            <option value="branch_sale_price_desc">价格(逆序)</option>
+                            <option value="branch_sale_price_incr">价格(顺序)</option>
+                            <option value="branch_sale_time_desc">时间(逆序)</option>
+                            <option value="branch_sale_time_incr">时间(顺序)</option>
+                            <option value="sale_branch_id_desc">门店号(逆序)</option>
+                            <option value="sale_branch_id_incr">门店号(顺序)</option>
+                            <option value="sale_goods_id_desc">商品号(逆序)</option>
+                            <option value="sale_goods_id_incr">商品号(顺序)</option>
+                        </select>
+
+                        <label style="color: red;">{{ Msg.msg_1 }}</label>
+                        <div class="field">
+                            <label for="Search_Branch_sale_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="销售单号" type="number"
+                                   name="Search_Branch_sale_id" value="{{All_request.Search_Branch_sale_id}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_2 }}</label>
+                        <div class="field">
+                            <label for="Search_Branch_sale_num"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="销售数量" type="number"
+                                   name="Search_Branch_sale_num" value="{{All_request.Search_Branch_sale_num}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_3 }}</label>
+                        <div class="field">
+                            <label for="Search_Branch_sale_price"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="销售价格" type="number"
+                                   name="Search_Branch_sale_price" value="{{All_request.Search_Branch_sale_price}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_4 }}</label>
+                        <div class="field">
+                            <label for="Search_Branch_sale_time"></label>
+                            <input type="date"
+                                   name="Search_Branch_sale_time" value="{{All_request.Search_Branch_sale_time}}">
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_5 }}</label>
+                        <select name="Search_Sale_branch_id" style="font-size: 15pt; margin-top:10px" id="Search_Sale_branch_id">
+                            <option value="All">所有分店</option>
+                            {% for item_1,item_2 in Dist %}
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label style="color: red;">{{ Msg.msg_6 }}</label>
+                        <div class="field">
+                            <label for="Search_Sale_goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品编号" type="number"
+                                   name="Search_Sale_goods_id" value="{{All_request.Search_Sale_goods_id}}">
+                        </div>
+
+                        <input type="submit" value="确认"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                           class="ui button" href="/branch_client_sale/?Reset=1">Reset</a>
+                    </form>
+
+                    <form action="/branch_client_sale/?Insert=1" method="POST" class="ui form">
+                        {% csrf_token %}
+                        {% if bill_lists %}
+                        <output style="color: red;">共有{{bill_len}}条查询记录</output>
+                        {% for bill in bill_lists%}
+                        <div class="field">
+                            <label></label>
+                            <output>单号:{{bill.branch_sale_id}}</output>
+                            <label></label>
+                            <output>销售数量:{{bill.branch_sale_num}}</output>
+                            <label></label>
+                            <output>销售售价:{{bill.branch_sale_price}}</output>
+                            <label></label>
+                            <output>销售时间:{{bill.branch_sale_time}}</output>
+                            <label></label>
+                            <output>门店号:{{bill.sale_branch_id.branch_id}}</output>
+                            <label></label>
+                            <output>商品码:{{bill.sale_goods_id.goods_id}}</output>
+                            <label></label>
+                            <a class="item" href="/branch_client_sale/?Edit_id={{bill.branch_sale_id}}">修改</a>
+                            <a class="item" href="/branch_client_sale/?Delete_id={{bill.branch_sale_id}}">删除</a>
+                        </div>
+                        {% endfor %}
+
+                        {% else %}
+                        <label style="color: red;">无查询结果</label>
+                        {% endif %}
+
+                        <div class="pagenation">
+                            {% if bill_lists.has_previous %}
+                            <a href="/branch_client_sale/?page={{ bill_lists.previous_page_number }}">上一页</a>
+                            {% endif %}
+
+                            {% for index in paginator.page_range %}
+                            {% if index == bill_lists.number %}
+                            <a href="/branch_client_sale/?page={{ index }}" class="active">{{ index }}</a>
+                            {% else %}
+                            <a href="/branch_client_sale/?page={{ index }}">{{ index }}</a>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if bill_lists.has_next %}
+                            <a href="/branch_client_sale/?page={{ bill_lists.next_page_number }}">下一页></a>
+                            {% endif %}
+                        </div>
+
+                        {% if zip_list %}
+                        {% for object in zip_list %}
+                        {% for item in object %}
+                        <div class="field">
+                            {% if item.sale_id %}
+                            <output>销售编号:{{ item.sale_id }}</output>
+                            {% endif %}
+                            {% if item.sale_num %}
+                            <output>销售数量:{{ item.sale_num }}</output>
+                            {% endif %}
+                            {% if item.sale_price %}
+                            <output>销售价格:{{ item.sale_price }}</output>
+                            {% endif %}
+                            {% if item.sale_time %}
+                            <output>销售时间:{{ item.sale_time }}</output>
+                            {% endif %}
+                            {% if item.branch_id %}
+                            <output>销售门店:{{ item.branch_id }}</output>
+                            {% endif %}
+                            {% if item.goods_id %}
+                            <output>商品编号:{{ item.goods_id }}</output>
+                            {% endif %}
+                            <label></label>
+                        </div>
+                        {% endfor %}
+                        {% endfor %}
+                        {% endif %}
+                        <h2 style="color: black;" align="center">销售信息录入</h2>
+                        <div class="field">
+                            <output>销售单号:{{New_id}}</output>
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_8 }}</label>
+                        <div class="field">
+                            <label for="New_branch_sale_num"></label>
+                            <input placeholder="数量" type="number" name="New_branch_sale_num"
+                                   autocomplete="off" required>
+                        </div>
+                        <div class="field">
+                            <label for="New_branch_sale_price"></label>
+                            <input placeholder="销售价格" type="number" name="New_branch_sale_price"
+                                   autocomplete="off">
+                        </div>
+                        <div class="field">
+                            <label for="New_branch_sale_time"></label>
+                            <input style="font-size: 15pt; margin-top:0px" type="datetime-local"
+                                   name="New_branch_sale_time" value="{{Now_datetime}}">
+                        </div>
+                        <div class="field">
+                            <output>销售门店:{{ New_sale_branch_id }} {{ New_branch_district }}</output>
+                        </div>
+                        <label style="color: red;">{{ Msg.msg_7 }}</label>
+                        <div class="field">
+                            <label for="New_sale_goods_id"></label>
+                            <input placeholder="编号" type="number" name="New_sale_goods_id"
+                                   autocomplete="off">
+                        </div>
+                        <input type="submit" value="新增"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                        <a style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                           class="ui button" href="/branch_client_sale/?Confirm_Add=1">确认新增</a>
+
+
+                    </form>
+
+
+                    {% if Edit_id %}
+                    <form action="/branch_client_sale/" method="POST" class="ui form">
+                        {% csrf_token %}
+                        <h2 style="color: black;" align="center">销售信息修改</h2>
+                        <div class="field">
+                            <output>修改单号:{{Edit_id}}</output>
+                        </div>
+
+                        <div class="field">
+                            <label for="edit_branch_sale_num"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="数量" type="number"
+                                   name="edit_branch_sale_num" value="{{Edit_object.branch_sale_num}}">
+                        </div>
+                        <div class="field">
+                            <label for="edit_branch_sale_price"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="价格" type="text"
+                                   name="edit_branch_sale_price" value="{{Edit_object.branch_sale_price}}">
+                        </div>
+                        <div class="field">
+                            <label for="edit_branch_sale_time"></label>
+                            <input type="datetime-local" name="edit_branch_sale_time"
+                                   value="{{Edit_id_sale_time}}">
+                        </div>
+                        <select name="edit_sale_branch_id" style="font-size: 15pt; margin-top:10px">
+                            <option value="{{Edit_object.sale_branch_id.branch_id}}">
+                                {{Edit_object.sale_branch_id.branch_id}} {{Edit_id_branch_district}}
+                            </option>
+                            {% for item_1,item_2 in Dist %}
+                            <option value="{{item_1}}">{{item_1}} {{item_2}}</option>
+                            {% endfor %}
+                        </select>
+
+                        <div class="field">
+                            <label for="edit_sale_goods_id"></label>
+                            <input style="font-size: 15pt; margin-top:0px" placeholder="商品码" type="number"
+                                   name="edit_sale_goods_id" value="{{Edit_object.sale_goods_id.goods_id}}">
+                        </div>
+                        <input type="submit" value="确认修改"
+                               style="width:100%; background-color: #87CEEB; font-size: 16pt; margin-top: 5%"
+                               class="ui button">
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{data|safe}}
+</body>
+
+<script type="text/javascript">
+    function Select_record() {
+        if('{{All_request.Search_Sale_branch_id}}' == 'All')
+            document.getElementById("Search_Sale_branch_id").selectedIndex = 0;
+        else
+            document.getElementById("Search_Sale_branch_id").selectedIndex = {{All_request.Search_Sale_branch_id}};
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</html>
